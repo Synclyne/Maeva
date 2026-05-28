@@ -242,6 +242,7 @@ export default function Listings() {
     params.limit = 12;
     api.get('/listings', { params, _silent: true })
       .then(r => { setListings(r.data.listings); setTotal(r.data.total); setPages(r.data.pages); })
+      .catch(() => { setListings([]); setTotal(0); setPages(1); })
       .finally(() => setLoading(false));
   }, [searchParams.toString()]); // eslint-disable-line react-hooks/exhaustive-deps
 
