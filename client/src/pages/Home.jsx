@@ -90,14 +90,14 @@ const QUICK_TYPES = [
 ];
 
 const POPULAR_COUNTIES = [
-  { name: 'Nairobi',  desc: 'Capital city',   img: 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99' },
-  { name: 'Mombasa',  desc: 'Coastal city',   img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750' },
-  { name: 'Kisumu',   desc: 'Lakeside city',  img: 'https://images.unsplash.com/photo-1559551409-dadc959f76b8' },
-  { name: 'Nakuru',   desc: 'Rift Valley',    img: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e' },
-  { name: 'Kiambu',   desc: 'Near Nairobi',   img: 'https://images.unsplash.com/photo-1501854140801-50d01698950b' },
-  { name: 'Kajiado',  desc: 'Rongai · Ngong', img: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5' },
-  { name: 'Machakos', desc: 'Eastern Kenya',  img: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c' },
-  { name: 'Kilifi',   desc: 'North Coast',    img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e' },
+  { name: 'Nairobi',  desc: 'Capital city',   img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&fit=crop' },
+  { name: 'Mombasa',  desc: 'Coastal city',   img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&fit=crop' },
+  { name: 'Kisumu',   desc: 'Lakeside city',  img: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&fit=crop' },
+  { name: 'Nakuru',   desc: 'Rift Valley',    img: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&fit=crop' },
+  { name: 'Kiambu',   desc: 'Near Nairobi',   img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&fit=crop' },
+  { name: 'Kajiado',  desc: 'Rongai · Ngong', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&fit=crop' },
+  { name: 'Machakos', desc: 'Eastern Kenya',  img: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&fit=crop' },
+  { name: 'Kilifi',   desc: 'North Coast',    img: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&fit=crop' },
 ];
 
 
@@ -350,7 +350,7 @@ export default function Home() {
               <Link key={name} to={`/listings?county=${name}`} aria-label={`Properties in ${name} County`}
                 className="relative rounded-2xl h-28 sm:h-36 overflow-hidden group tap-highlight bg-gray-800">
                 <img
-                  src={`${img}?w=600&h=300&fit=crop&auto=format&q=75`}
+                  src={img}
                   alt={`${name}, Kenya`}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
