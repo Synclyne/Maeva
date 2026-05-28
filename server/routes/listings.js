@@ -63,56 +63,71 @@ router.get('/realtor/:userId', async (req, res) => {
 
 /* ── GET all listings with filters ──────────────────────────*/
 router.get('/', async (req, res) => {
-  const { type, transaction, county, area, minPrice, maxPrice, bedrooms,
-          search, featured, limit = 12, page = 1, sort = 'newest' } = req.query;
+  try {
+    const { type, transaction, county, area, minPrice, maxPrice, bedrooms,
+            search, featured, limit = 12, page = 1, sort = 'newest' } = req.query;
 
-  let q = `SELECT l.*, u.name as agent_name, u.phone as agent_phone, u.company as agent_company, u.id as agent_id
-           FROM listings l JOIN users u ON l.user_id = u.id
-           WHERE l.is_active = 1 AND ${NOT_EXPIRED}`;
-  const p = [];
+    const p = [];
+    let conditions = `l.is_active = 1 AND ${NOT_EXPIRED}`;
+    if (type)        { conditions += ' AND LOWER(l.type) = LOWER($' + (p.push(type))        + ')'; }
+    if (transaction) { conditions += ' AND LOWER(l.deal_type) = LOWER($' + (p.push(transaction)) + ')'; }
+    if (county)      { conditions += ' AND l.county = $'       + (p.push(county));       }
+    if (area)        { conditions += ' AND l.area = $'         + (p.push(area));          }
+    if (minPrice)    { conditions += ' AND l.price >= $'       + (p.push(Number(minPrice))); }
+    if (maxPrice)    { conditions += ' AND l.price <= $'       + (p.push(Number(maxPrice))); }
+    if (bedrooms)    { conditions += ' AND l.bedrooms >= $'    + (p.push(Number(bedrooms))); }
+    if (featured)    { conditions += ' AND l.is_featured = 1'; }
+    if (search) {
+      const s = `%${search}%`;
+      const i = p.length;
+      p.push(s, s, s, s);
+      conditions += ` AND (l.title ILIKE $${i+1} OR l.description ILIKE $${i+2} OR l.area ILIKE $${i+3} OR l.county ILIKE $${i+4})`;
+    }
 
-  if (type)        { q += ' AND LOWER(l.type) = LOWER(?)';        p.push(type); }
-  if (transaction) { q += ' AND LOWER(l.deal_type) = LOWER(?)';   p.push(transaction); }
-  if (county)      { q += ' AND l.county = ?';                     p.push(county); }
-  if (area)        { q += ' AND l.area = ?';                       p.push(area); }
-  if (minPrice)    { q += ' AND l.price >= ?';                     p.push(Number(minPrice)); }
-  if (maxPrice)    { q += ' AND l.price <= ?';                     p.push(Number(maxPrice)); }
-  if (bedrooms)    { q += ' AND l.bedrooms >= ?';                  p.push(Number(bedrooms)); }
-  if (featured)    { q += ' AND l.is_featured = 1'; }
-  if (search) {
-    const s = `%${search}%`;
-    q += ' AND (l.title ILIKE ? OR l.description ILIKE ? OR l.area ILIKE ? OR l.county ILIKE ?)';
-    p.push(s, s, s, s);
+    const sortMap = {
+      newest:     'l.is_featured DESC, l.featured_rank DESC, l.created_at DESC',
+      oldest:     'l.created_at ASC',
+      price_asc:  'l.price ASC',
+      price_desc: 'l.price DESC',
+      popular:    'l.views DESC, l.created_at DESC',
+    };
+    const orderBy = sortMap[sort] || sortMap.newest;
+
+    const baseFrom = `FROM listings l JOIN users u ON l.user_id = u.id WHERE ${conditions}`;
+
+    const countRes = await db.pool.query(`SELECT COUNT(*) AS cnt ${baseFrom}`, p);
+    const total    = parseInt(countRes.rows[0]?.cnt) || 0;
+    const offset   = (Number(page) - 1) * Number(limit);
+    const lim      = Number(limit);
+
+    const dataRes  = await db.pool.query(
+      `SELECT l.*, u.name AS agent_name, u.phone AS agent_phone, u.company AS agent_company, u.id AS agent_id
+       ${baseFrom} ORDER BY ${orderBy} LIMIT $${p.length + 1} OFFSET $${p.length + 2}`,
+      [...p, lim, offset]
+    );
+
+    res.json({ listings: dataRes.rows.map(parseListing), total, page: Number(page), pages: Math.ceil(total / lim) });
+  } catch (err) {
+    console.error('[listings GET /]', err);
+    res.status(500).json({ message: err.message });
   }
-
-  const sortMap = {
-    newest:     'l.is_featured DESC, l.featured_rank DESC, l.created_at DESC',
-    oldest:     'l.created_at ASC',
-    price_asc:  'l.price ASC',
-    price_desc: 'l.price DESC',
-    popular:    'l.views DESC, l.created_at DESC',
-  };
-  q += ` ORDER BY ${sortMap[sort] || sortMap.newest}`;
-
-  const countQ   = q.replace(/SELECT l\.\*, u\.name as agent_name[\s\S]*?FROM/, 'SELECT COUNT(*) as cnt FROM');
-  const countRow = await db.get(countQ, p);
-  const total    = parseInt(countRow?.cnt) || 0;
-  const offset   = (Number(page) - 1) * Number(limit);
-  const rows     = await db.query(q + ' LIMIT ? OFFSET ?', [...p, Number(limit), offset]);
-
-  res.json({ listings: rows.map(parseListing), total, page: Number(page), pages: Math.ceil(total / Number(limit)) });
 });
 
 /* ── GET single listing ──────────────────────────────────── */
 router.get('/:id', async (req, res) => {
-  const row = await db.get(`
-    SELECT l.*, u.name as agent_name, u.phone as agent_phone, u.email as agent_email,
-           u.company as agent_company, u.id as agent_id
-    FROM listings l JOIN users u ON l.user_id = u.id
-    WHERE l.id = ? AND l.is_active = 1
-  `, [req.params.id]);
-  if (!row) return res.status(404).json({ message: 'Listing not found' });
-  res.json(parseListing(row));
+  try {
+    const row = await db.get(`
+      SELECT l.*, u.name as agent_name, u.phone as agent_phone, u.email as agent_email,
+             u.company as agent_company, u.id as agent_id
+      FROM listings l JOIN users u ON l.user_id = u.id
+      WHERE l.id = ? AND l.is_active = 1
+    `, [req.params.id]);
+    if (!row) return res.status(404).json({ message: 'Listing not found' });
+    res.json(parseListing(row));
+  } catch (err) {
+    console.error('[listings GET /:id]', err);
+    res.status(500).json({ message: err.message });
+  }
 });
 
 /* ── POST record a view ──────────────────────────────────── */
