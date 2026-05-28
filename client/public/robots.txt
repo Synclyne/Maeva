@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /post-listing
+Disallow: /wishlist
+
+Sitemap: https://maeva.co.ke/sitemap.xml

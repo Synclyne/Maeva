@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maeva — Premium Real Estate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #EDF1F7;
+  --bg-warm: #F5F7FC;
+  --white: #FFFFFF;
+  --black: #0A0A0A;
+  --dark: #111827;
+  --navy: #1a2744;
+  --blue: #1D3F88;
+  --blue-mid: #2855B8;
+  --blue-light: #3B6FDB;
+  --blue-pale: #E8EEF8;
+  --text: #1F2937;
+  --text-muted: #6B7280;
+  --text-light: #9CA3AF;
+  --border: #E2E8F0;
+  --card-dark: #0D1B2A;
+  --ff-display: 'Cormorant Garamond', Georgia, serif;
+  --ff-body: 'DM Sans', system-ui, sans-serif;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--ff-body);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:20px 64px;display:flex;align-items:center;gap:40px;transition:all 0.3s;}
+nav.scrolled{background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);padding:14px 64px;box-shadow:0 1px 0 rgba(0,0,0,0.08);}
+.nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0;}
+.nav-logo-text{font-family:var(--ff-display);font-size:23px;font-weight:600;color:var(--dark);letter-spacing:0.02em;}
+.nav-links{display:flex;align-items:center;gap:32px;list-style:none;flex:1;}
+.nav-links a{font-size:14px;font-weight:500;color:var(--text);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover{color:var(--blue-light);}
+.nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.btn-ghost{padding:9px 20px;font-family:var(--ff-body);font-size:14px;font-weight:500;color:var(--dark);background:transparent;border:1.5px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.btn-ghost:hover{border-color:var(--dark);}
+.btn-primary{padding:9px 22px;font-family:var(--ff-body);font-size:14px;font-weight:600;color:var(--white);background:var(--dark);border:1.5px solid var(--dark);border-radius:8px;cursor:pointer;transition:all 0.25s;text-decoration:none;}
+.btn-primary:hover{background:var(--navy);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.18);}
+
+/* HERO */
+#hero{min-height:100vh;background:var(--bg);padding-top:88px;display:grid;grid-template-columns:1fr 1fr;align-items:center;position:relative;overflow:hidden;}
+.hero-content{padding:80px 56px 80px 80px;position:relative;z-index:2;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:var(--blue-pale);border-radius:100px;font-size:11px;font-weight:600;color:var(--blue);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:28px;}
+.hero-badge-dot{width:6px;height:6px;background:var(--blue-light);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(1.3);}}
+.hero-title{font-family:var(--ff-display);font-size:clamp(52px,5.5vw,82px);font-weight:500;line-height:1.06;color:var(--dark);letter-spacing:-0.02em;margin-bottom:22px;}
+.hero-title em{font-style:italic;color:var(--blue-mid);}
+.hero-subtitle{font-size:16px;color:var(--text-muted);line-height:1.75;max-width:420px;margin-bottom:36px;}
+
+/* SEARCH WIDGET */
+.search-widget{background:var(--white);border-radius:var(--radius-lg);padding:22px 26px;box-shadow:0 24px 64px rgba(0,0,0,0.12);max-width:540px;margin-bottom:40px;}
+.search-tabs{display:flex;gap:4px;margin-bottom:18px;background:var(--bg);border-radius:10px;padding:4px;}
+.search-tab{flex:1;padding:8px 14px;border:none;background:transparent;border-radius:7px;font-family:var(--ff-body);font-size:14px;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all 0.2s;}
+.search-tab.active{background:var(--white);color:var(--dark);box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.search-fields{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;}
+.search-field{display:flex;flex-direction:column;gap:4px;}
+.search-field label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);}
+.search-field select{padding:10px 28px 10px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--ff-body);font-size:13px;color:var(--text);background:var(--white) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;appearance:none;cursor:pointer;transition:border-color 0.2s;}
+.search-field select:focus{outline:none;border-color:var(--blue-light);}
+.btn-search{padding:10px 20px;background:var(--dark);color:var(--white);border:none;border-radius:8px;font-family:var(--ff-body);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;transition:all 0.25s;height:42px;}
+.btn-search:hover{background:var(--navy);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.18);}
+.hero-stats{display:flex;gap:40px;padding-top:32px;border-top:1px solid var(--border);}
+.hero-stat-num{font-family:var(--ff-display);font-size:38px;font-weight:600;color:var(--dark);line-height:1;}
+.hero-stat-label{font-size:11px;color:var(--text-muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.07em;font-weight:500;}
+.hero-image-col{position:relative;height:100vh;overflow:hidden;}
+.hero-image-col img{width:100%;height:100%;object-fit:cover;}
+.hero-image-overlay{position:absolute;inset:0;background:linear-gradient(to right, var(--bg) 0%, transparent 25%);}
+
+/* SECTION COMMONS */
+section{padding:96px 80px;}
+.section-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px;}
+.section-eyebrow{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--blue-light);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.section-eyebrow::before{content:'';display:block;width:22px;height:2px;background:var(--blue-light);border-radius:2px;}
+.section-title{font-family:var(--ff-display);font-size:clamp(32px,3.5vw,50px);font-weight:500;color:var(--dark);line-height:1.13;letter-spacing:-0.02em;}
+.link-all{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--dark);text-decoration:none;transition:gap 0.2s;flex-shrink:0;margin-bottom:4px;}
+.link-all:hover{gap:12px;}
+.link-all::after{content:'→';font-size:15px;}
+
+/* PROPERTIES */
+#properties{background:var(--bg-warm);}
+.property-filters{display:flex;gap:8px;margin-bottom:32px;}
+.filter-btn{padding:8px 20px;border:1.5px solid var(--border);border-radius:100px;background:transparent;font-family:var(--ff-body);font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all 0.2s;}
+.filter-btn.active,.filter-btn:hover{background:var(--dark);border-color:var(--dark);color:var(--white);}
+.properties-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.property-card{border-radius:var(--radius-lg);overflow:hidden;background:var(--card-dark);color:var(--white);cursor:pointer;transition:transform 0.3s,box-shadow 0.3s;}
+.property-card:hover{transform:translateY(-6px);box-shadow:0 32px 64px rgba(0,0,0,0.2);}
+.property-card-image-wrap{overflow:hidden;position:relative;}
+.property-card-image{width:100%;height:220px;object-fit:cover;display:block;transition:transform 0.5s;}
+.property-card:hover .property-card-image{transform:scale(1.05);}
+.property-badge{position:absolute;top:14px;left:14px;padding:4px 12px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;}
+.badge-sale{background:#2563EB;color:#fff;}
+.badge-rent{background:#059669;color:#fff;}
+.badge-land{background:#D97706;color:#fff;}
+.property-card-body{padding:20px 22px 22px;}
+.property-location{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.55);margin-bottom:7px;}
+.property-name{font-family:var(--ff-display);font-size:20px;font-weight:500;color:var(--white);margin-bottom:13px;line-height:1.3;}
+.property-meta{display:flex;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
+.property-meta-item{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.55);}
+.property-footer{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid rgba(255,255,255,0.09);}
+.property-price{font-family:var(--ff-display);font-size:22px;font-weight:600;color:var(--white);}
+.property-price-label{font-size:10px;color:rgba(255,255,255,0.45);margin-top:1px;}
+.btn-book{padding:8px 16px;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.18);border-radius:8px;font-family:var(--ff-body);font-size:12px;font-weight:600;color:var(--white);cursor:pointer;transition:all 0.2s;}
+.btn-book:hover{background:var(--white);color:var(--dark);border-color:var(--white);}
+
+/* SERVICES */
+#services{background:var(--dark);color:var(--white);}
+#services .section-title{color:var(--white);}
+.services-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.service-card{padding:36px 28px;border-radius:var(--radius);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);transition:all 0.3s;cursor:pointer;}
+.service-card:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);transform:translateY(-4px);}
+.service-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:22px;}
+.si-1{background:rgba(59,111,219,0.22);}
+.si-2{background:rgba(16,185,129,0.22);}
+.si-3{background:rgba(245,158,11,0.22);}
+.si-4{background:rgba(236,72,153,0.22);}
+.service-title{font-family:var(--ff-display);font-size:20px;font-weight:500;color:var(--white);margin-bottom:10px;}
+.service-desc{font-size:13px;color:rgba(255,255,255,0.48);line-height:1.7;margin-bottom:20px;}
+.service-link{font-size:13px;font-weight:600;color:rgba(255,255,255,0.65);text-decoration:none;display:flex;align-items:center;gap:6px;transition:gap 0.2s,color 0.2s;}
+.service-link:hover{gap:10px;color:var(--white);}
+
+/* ABOUT */
+#about{background:var(--bg);}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.about-image-stack{position:relative;height:480px;}
+.about-img-main{position:absolute;right:0;top:0;width:75%;height:380px;object-fit:cover;border-radius:var(--radius-lg);}
+.about-img-accent{position:absolute;left:0;bottom:0;width:54%;height:240px;object-fit:cover;border-radius:var(--radius);box-shadow:var(--shadow-lg);border:4px solid var(--white);}
+.about-stat-card{position:absolute;right:-20px;top:50%;transform:translateY(-50%);background:var(--dark);color:var(--white);padding:20px 24px;border-radius:var(--radius);box-shadow:var(--shadow-lg);text-align:center;min-width:130px;}
+.about-stat-num{font-family:var(--ff-display);font-size:36px;font-weight:600;line-height:1;}
+.about-stat-label{font-size:10px;color:rgba(255,255,255,0.55);margin-top:5px;text-transform:uppercase;letter-spacing:0.07em;}
+.about-features{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px;}
+.about-feature{display:flex;align-items:flex-start;gap:12px;}
+.about-feature-icon{width:40px;height:40px;border-radius:10px;background:var(--blue-pale);color:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
+.about-feature-title{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:2px;}
+.about-feature-text{font-size:12px;color:var(--text-muted);line-height:1.5;}
+
+/* TESTIMONIALS */
+#testimonials{background:var(--bg-warm);}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.testimonial-card{padding:32px;background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);transition:transform 0.3s,box-shadow 0.3s;}
+.testimonial-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.testimonial-stars{color:#F59E0B;font-size:14px;margin-bottom:16px;letter-spacing:2px;}
+.testimonial-text{font-size:15px;color:var(--text);line-height:1.8;font-style:italic;margin-bottom:24px;font-family:var(--ff-display);}
+.testimonial-author{display:flex;align-items:center;gap:12px;}
+.testimonial-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;}
+.testimonial-name{font-size:14px;font-weight:600;color:var(--dark);}
+.testimonial-role{font-size:12px;color:var(--text-muted);}
+
+/* BLOG */
+#blog{background:var(--bg);}
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.blog-card{background:var(--white);border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);transition:transform 0.3s,box-shadow 0.3s;cursor:pointer;}
+.blog-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);}
+.blog-card-image{width:100%;height:200px;object-fit:cover;display:block;}
+.blog-card-body{padding:24px;}
+.blog-tag{display:inline-block;padding:3px 10px;background:var(--blue-pale);color:var(--blue);border-radius:100px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px;}
+.blog-title{font-family:var(--ff-display);font-size:20px;font-weight:500;color:var(--dark);line-height:1.4;margin-bottom:10px;}
+.blog-excerpt{font-size:13px;color:var(--text-muted);line-height:1.65;margin-bottom:16px;}
+.blog-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-light);}
+.blog-meta-sep{color:var(--border);}
+
+/* APP CTA */
+#app-cta{background:var(--blue);padding:72px 80px;}
+.app-cta-inner{display:grid;grid-template-columns:1fr auto;gap:64px;align-items:center;}
+.app-cta-title{font-family:var(--ff-display);font-size:clamp(32px,3.5vw,48px);font-weight:500;color:var(--white);line-height:1.2;margin-bottom:14px;}
+.app-cta-sub{font-size:15px;color:rgba(255,255,255,0.68);margin-bottom:32px;max-width:460px;line-height:1.7;}
+.app-buttons{display:flex;gap:12px;}
+.app-btn{display:flex;align-items:center;gap:10px;padding:11px 20px;background:rgba(255,255,255,0.11);border:1.5px solid rgba(255,255,255,0.2);border-radius:10px;color:var(--white);text-decoration:none;transition:all 0.2s;}
+.app-btn:hover{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.35);}
+.app-btn-label{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.65;}
+.app-btn-store{font-size:15px;font-weight:600;line-height:1;}
+.app-phone{background:rgba(255,255,255,0.11);border:2px solid rgba(255,255,255,0.18);border-radius:28px;width:155px;height:290px;display:flex;align-items:center;justify-content:center;}
+.app-phone-screen{background:rgba(255,255,255,0.07);border-radius:20px;width:135px;height:270px;padding:14px 12px;display:flex;flex-direction:column;gap:8px;}
+.app-screen-img{background:rgba(255,255,255,0.14);border-radius:10px;flex:1;display:flex;align-items:center;justify-content:center;}
+.app-screen-bar{background:rgba(255,255,255,0.09);border-radius:5px;height:12px;}
+.app-screen-bar-short{background:rgba(255,255,255,0.07);border-radius:5px;height:10px;width:65%;}
+.app-screen-btn{background:rgba(255,255,255,0.16);border-radius:8px;height:28px;display:flex;align-items:center;justify-content:center;font-size:10px;color:white;font-weight:600;margin-top:auto;}
+
+/* PARTNERS */
+#partners{background:var(--bg-warm);padding:44px 80px;}
+.partners-inner{display:flex;align-items:center;justify-content:space-between;}
+.partners-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-muted);flex-shrink:0;margin-right:48px;}
+.partners-logos{display:flex;align-items:center;gap:48px;flex:1;justify-content:space-around;}
+.partner-logo{font-family:var(--ff-display);font-size:18px;font-weight:600;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;transition:color 0.2s;cursor:pointer;}
+.partner-logo:hover{color:var(--dark);}
+
+/* FOOTER */
+footer{background:var(--dark);padding:64px 80px 32px;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:52px;}
+.footer-desc{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.75;margin:16px 0 24px;max-width:250px;}
+.footer-social{display:flex;gap:9px;}
+.social-btn{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;font-weight:700;transition:all 0.2s;}
+.social-btn:hover{background:rgba(255,255,255,0.14);color:var(--white);}
+.footer-col-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--white);margin-bottom:18px;}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.footer-links a{font-size:13px;color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:rgba(255,255,255,0.85);}
+.footer-bottom{padding-top:28px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.3);}
+.footer-legal{display:flex;gap:20px;}
+.footer-legal a{font-size:12px;color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.2s;}
+.footer-legal a:hover{color:rgba(255,255,255,0.6);}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 0.65s ease,transform 0.65s ease;}
+.reveal.visible{opacity:1;transform:none;}
+.d1{transition-delay:0.08s;}.d2{transition-delay:0.18s;}.d3{transition-delay:0.28s;}.d4{transition-delay:0.38s;}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  nav,nav.scrolled{padding-left:32px;padding-right:32px;}
+  #hero{grid-template-columns:1fr;}
+  .hero-content{padding:80px 40px 60px;}
+  .hero-image-col{display:none;}
+  section{padding:72px 40px;}
+  .properties-grid{grid-template-columns:repeat(2,1fr);}
+  .services-grid{grid-template-columns:repeat(2,1fr);}
+  .about-grid{grid-template-columns:1fr;}
+  .about-image-stack{display:none;}
+  .testimonials-grid{grid-template-columns:repeat(2,1fr);}
+  .blog-grid{grid-template-columns:repeat(2,1fr);}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .search-fields{grid-template-columns:1fr 1fr;}
+  .btn-search{grid-column:span 2;justify-content:center;}
+  #app-cta{padding:56px 40px;}
+  #partners{padding:40px;}
+}
+@media(max-width:640px){
+  nav,nav.scrolled{padding-left:20px;padding-right:20px;}
+  .nav-links{display:none;}
+  section{padding:56px 20px;}
+  .hero-content{padding:56px 20px 40px;}
+  .properties-grid,.testimonials-grid,.blog-grid,.services-grid{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr;}
+  .section-header{flex-direction:column;align-items:flex-start;gap:14px;}
+  .app-cta-inner{grid-template-columns:1fr;}
+  .app-phone{display:none;}
+  #app-cta,#partners,footer{padding-left:20px;padding-right:20px;}
+  .footer-bottom{flex-direction:column;gap:10px;text-align:center;}
+  .search-fields{grid-template-columns:1fr;}
+  .btn-search{grid-column:auto;}
+  .hero-stats{gap:24px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <svg width="34" height="34" viewBox="0 0 34 34" fill="none"><rect width="34" height="34" rx="8" fill="#1D3F88"/><path d="M17 7L27 15V27H21V21H13V27H7V15L17 7Z" fill="white"/></svg>
+    <span class="nav-logo-text">Maeva</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#properties">Properties</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#blog">Journal</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="#" class="btn-ghost">Login</a>
+    <a href="#" class="btn-primary">Sign Up</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content">
+    <div class="hero-badge"><span class="hero-badge-dot"></span>Premium Real Estate Platform</div>
+    <h1 class="hero-title">Find Your <em>Perfect</em><br>Property Today</h1>
+    <p class="hero-subtitle">Browse thousands of houses, apartments and land plots. We make finding your dream home simple, transparent and effortless.</p>
+
+    <div class="search-widget">
+      <div class="search-tabs">
+        <button class="search-tab active" onclick="setTab(this,'buy')">Buy</button>
+        <button class="search-tab" onclick="setTab(this,'rent')">Rent</button>
+        <button class="search-tab" onclick="setTab(this,'land')">Land</button>
+      </div>
+      <div class="search-fields">
+        <div class="search-field">
+          <label>Location</label>
+          <select>
+            <option>New York City</option><option>Los Angeles</option><option>Chicago</option>
+            <option>Houston</option><option>Miami</option><option>Seattle</option>
+          </select>
+        </div>
+        <div class="search-field">
+          <label>Property Type</label>
+          <select id="type-sel">
+            <option>Any Type</option><option>House</option><option>Apartment</option>
+            <option>Villa</option><option>Land</option><option>Penthouse</option>
+          </select>
+        </div>
+        <div class="search-field">
+          <label>Budget</label>
+          <select>
+            <option>Any Price</option><option>Under $200k</option><option>$200k–$500k</option>
+            <option>$500k–$1M</option><option>$1M–$2M</option><option>$2M+</option>
+          </select>
+        </div>
+        <button class="btn-search">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Search
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div><div class="hero-stat-num counter" data-target="1200">0</div><div class="hero-stat-label">Listed Properties</div></div>
+      <div><div class="hero-stat-num counter" data-target="4500">0</div><div class="hero-stat-label">Happy Clients</div></div>
+      <div><div class="hero-stat-num counter" data-target="100">0</div><div class="hero-stat-label">Awards Won</div></div>
+    </div>
+  </div>
+
+  <div class="hero-image-col">
+    <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=900&h=1100&fit=crop&auto=format" alt="Modern building">
+    <div class="hero-image-overlay"></div>
+  </div>
+</section>
+
+<!-- PROPERTIES -->
+<section id="properties">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-eyebrow">Featured Listings</div>
+      <h2 class="section-title">Our Popular<br>Homes &amp; Properties</h2>
+    </div>
+    <a href="#" class="link-all">Explore All</a>
+  </div>
+
+  <div class="property-filters reveal">
+    <button class="filter-btn active" onclick="filterProps(this,'all')">All</button>
+    <button class="filter-btn" onclick="filterProps(this,'sale')">For Sale</button>
+    <button class="filter-btn" onclick="filterProps(this,'rent')">For Rent</button>
+    <button class="filter-btn" onclick="filterProps(this,'land')">Land</button>
+  </div>
+
+  <div class="properties-grid" id="props-grid">
+
+    <div class="property-card reveal d1" data-type="sale">
+      <div class="property-card-image-wrap">
+        <img class="property-card-image" src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=420&fit=crop&auto=format" alt="Hillcrest Manor">
+        <span class="property-badge badge-sale">For Sale</span>
+      </div>
+      <div class="property-card-body">
+        <div class="property-location"><svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Brooklyn, New York</div>
+        <div class="property-name">Hillcrest Modern Manor</div>
+        <div class="property-meta">
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>4 Beds</span>
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h7"/></svg>3 Baths</span>
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>2,400 sqft</span>
+        </div>
+        <div class="property-footer">
+          <div><div class="property-price">$1,250,000</div><div class="property-price-label">For Sale</div></div>
+          <button class="btn-book">View Details</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="property-card reveal d2" data-type="rent">
+      <div class="property-card-image-wrap">
+        <img class="property-card-image" src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=420&fit=crop&auto=format" alt="Skyline Apartment">
+        <span class="property-badge badge-rent">For Rent</span>
+      </div>
+      <div class="property-card-body">
+        <div class="property-location"><svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Manhattan, New York</div>
+        <div class="property-name">Skyline Luxury Apartment</div>
+        <div class="property-meta">
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>2 Beds</span>
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h7"/></svg>2 Baths</span>
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>1,100 sqft</span>
+        </div>
+        <div class="property-footer">
+          <div><div class="property-price">$4,500/mo</div><div class="property-price-label">For Rent</div></div>
+          <button class="btn-book">View Details</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="property-card reveal d3" data-type="sale">
+      <div class="property-card-image-wrap">
+        <img class="property-card-image" src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&h=420&fit=crop&auto=format" alt="Emerald Villa">
+        <span class="property-badge badge-sale">For Sale</span>
+      </div>
+      <div class="property-card-body">
+        <div class="property-location"><svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Beverly Hills, CA</div>
+        <div class="property-name">Emerald Hills Villa</div>
+        <div class="property-meta">
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>6 Beds</span>
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h7"/></svg>5 Baths</span>
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>6,800 sqft</span>
+        </div>
+        <div class="property-footer">
+          <div><div class="property-price">$4,750,000</div><div class="property-price-label">For Sale</div></div>
+          <button class="btn-book">View Details</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="property-card reveal d1" data-type="land">
+      <div class="property-card-image-wrap">
+        <img class="property-card-image" src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=420&fit=crop&auto=format" alt="Maplewood Land">
+        <span class="property-badge badge-land">Land</span>
+      </div>
+      <div class="property-card-body">
+        <div class="property-location"><svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Austin, Texas</div>
+        <div class="property-name">Maplewood Premium Plot</div>
+        <div class="property-meta">
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>5.2 Acres</span>
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Residential Zone</span>
+        </div>
+        <div class="property-footer">
+          <div><div class="property-price">$380,000</div><div class="property-price-label">For Sale</div></div>
+          <button class="btn-book">View Details</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="property-card reveal d2" data-type="rent">
+      <div class="property-card-image-wrap">
+        <img class="property-card-image" src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=420&fit=crop&auto=format" alt="Harbour Penthouse">
+        <span class="property-badge badge-rent">For Rent</span>
+      </div>
+      <div class="property-card-body">
+        <div class="property-location"><svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Miami Beach, FL</div>
+        <div class="property-name">Harbour View Penthouse</div>
+        <div class="property-meta">
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>3 Beds</span>
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h7"/></svg>3 Baths</span>
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>2,200 sqft</span>
+        </div>
+        <div class="property-footer">
+          <div><div class="property-price">$9,800/mo</div><div class="property-price-label">For Rent</div></div>
+          <button class="btn-book">View Details</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="property-card reveal d3" data-type="sale">
+      <div class="property-card-image-wrap">
+        <img class="property-card-image" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=420&fit=crop&auto=format" alt="Cedar Ridge">
+        <span class="property-badge badge-sale">For Sale</span>
+      </div>
+      <div class="property-card-body">
+        <div class="property-location"><svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Seattle, Washington</div>
+        <div class="property-name">Cedar Ridge Family Home</div>
+        <div class="property-meta">
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>5 Beds</span>
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h7"/></svg>4 Baths</span>
+          <span class="property-meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>3,600 sqft</span>
+        </div>
+        <div class="property-footer">
+          <div><div class="property-price">$1,890,000</div><div class="property-price-label">For Sale</div></div>
+          <button class="btn-book">View Details</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-eyebrow" style="color:rgba(255,255,255,0.45)"><span style="background:rgba(255,255,255,0.25);display:inline-block;width:22px;height:2px;margin-right:8px;vertical-align:middle;border-radius:2px;"></span>What We Offer</div>
+      <h2 class="section-title">Services Tailored<br>For Every Need</h2>
+    </div>
+    <a href="#" class="link-all" style="color:rgba(255,255,255,0.55)">View All Services</a>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal d1">
+      <div class="service-icon si-1">🏠</div>
+      <div class="service-title">Property Sales</div>
+      <p class="service-desc">Expert guidance through every step of buying or selling residential and commercial properties at the best market rates.</p>
+      <a href="#" class="service-link">Learn More →</a>
+    </div>
+    <div class="service-card reveal d2">
+      <div class="service-icon si-2">🔑</div>
+      <div class="service-title">Rental Management</div>
+      <p class="service-desc">Full-service rental management including tenant screening, lease management, and maintenance coordination.</p>
+      <a href="#" class="service-link">Learn More →</a>
+    </div>
+    <div class="service-card reveal d3">
+      <div class="service-icon si-3">📐</div>
+      <div class="service-title">Interior Design</div>
+      <p class="service-desc">Transform any space with our award-winning interior design team. From concept to completion, we create beautiful living environments.</p>
+      <a href="#" class="service-link">Learn More →</a>
+    </div>
+    <div class="service-card reveal d4">
+      <div class="service-icon si-4">💼</div>
+      <div class="service-title">Investment Advisory</div>
+      <p class="service-desc">Data-driven investment strategies to help you build a profitable property portfolio with confidence and clarity.</p>
+      <a href="#" class="service-link">Learn More →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-image-stack reveal">
+      <img class="about-img-main" src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=500&fit=crop&auto=format" alt="Luxury home">
+      <img class="about-img-accent" src="https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=400&h=300&fit=crop&auto=format" alt="Modern interior">
+      <div class="about-stat-card">
+        <div class="about-stat-num">98%</div>
+        <div class="about-stat-label">Client<br>Satisfaction</div>
+      </div>
+    </div>
+    <div class="reveal d2">
+      <div class="section-eyebrow">Why Choose Us</div>
+      <h2 class="section-title" style="margin-bottom:18px">Trusted by Thousands<br>Across the Nation</h2>
+      <p style="font-size:15px;color:var(--text-muted);line-height:1.8;margin-bottom:32px;">We've been connecting buyers, renters, and sellers with their ideal properties since 2008. Our team of 200+ certified agents brings local expertise and world-class service to every transaction.</p>
+      <div class="about-features">
+        <div class="about-feature"><div class="about-feature-icon">🎯</div><div><div class="about-feature-title">Verified Listings</div><div class="about-feature-text">Every property thoroughly verified before listing</div></div></div>
+        <div class="about-feature"><div class="about-feature-icon">⚡</div><div><div class="about-feature-title">Fast Process</div><div class="about-feature-text">Close deals in as little as 7 business days</div></div></div>
+        <div class="about-feature"><div class="about-feature-icon">🤝</div><div><div class="about-feature-title">Dedicated Agents</div><div class="about-feature-text">Personal agent assigned to every client</div></div></div>
+        <div class="about-feature"><div class="about-feature-icon">📊</div><div><div class="about-feature-title">Market Insights</div><div class="about-feature-text">Real-time data and market trend analysis</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-eyebrow">Client Stories</div>
+      <h2 class="section-title">What Our Clients<br>Say About Us</h2>
+    </div>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal d1">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"Maeva made finding our dream home an absolute pleasure. Our agent was incredibly knowledgeable and patient throughout the entire process."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop&auto=format" alt="Sarah M">
+        <div><div class="testimonial-name">Sarah Mitchell</div><div class="testimonial-role">Home Buyer, Brooklyn NY</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal d2">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"Sold our property in under two weeks at above asking price. The team's market knowledge and marketing strategy were second to none."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&auto=format" alt="James R">
+        <div><div class="testimonial-name">James Rodriguez</div><div class="testimonial-role">Property Seller, Beverly Hills</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal d3">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"As a first-time investor, I needed guidance. Maeva's advisory team helped me make smart choices and build a profitable portfolio from scratch."</p>
+      <div class="testimonial-author">
+        <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&auto=format" alt="Emily C">
+        <div><div class="testimonial-name">Emily Chen</div><div class="testimonial-role">Real Estate Investor, Miami</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-eyebrow">Our Journal</div>
+      <h2 class="section-title">Property Insights<br>&amp; Market News</h2>
+    </div>
+    <a href="#" class="link-all">Read All Articles</a>
+  </div>
+  <div class="blog-grid">
+    <div class="blog-card reveal d1">
+      <img class="blog-card-image" src="https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=600&h=300&fit=crop&auto=format" alt="Market">
+      <div class="blog-card-body">
+        <span class="blog-tag">Market Trends</span>
+        <h3 class="blog-title">2025 Housing Market Outlook: What Buyers Need to Know</h3>
+        <p class="blog-excerpt">Interest rates are shifting and inventory is recovering. Here's how to position yourself for success this year.</p>
+        <div class="blog-meta"><span>May 12, 2025</span><span class="blog-meta-sep">·</span><span>6 min read</span></div>
+      </div>
+    </div>
+    <div class="blog-card reveal d2">
+      <img class="blog-card-image" src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=300&fit=crop&auto=format" alt="Buying">
+      <div class="blog-card-body">
+        <span class="blog-tag">Buying Guide</span>
+        <h3 class="blog-title">10 Things First-Time Home Buyers Always Get Wrong</h3>
+        <p class="blog-excerpt">From skipping the home inspection to not locking rates — avoid these costly mistakes most first-time buyers make.</p>
+        <div class="blog-meta"><span>April 28, 2025</span><span class="blog-meta-sep">·</span><span>8 min read</span></div>
+      </div>
+    </div>
+    <div class="blog-card reveal d3">
+      <img class="blog-card-image" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=300&fit=crop&auto=format" alt="Investment">
+      <div class="blog-card-body">
+        <span class="blog-tag">Investment</span>
+        <h3 class="blog-title">Why Land Investment Is the Smartest Long-Term Strategy Right Now</h3>
+        <p class="blog-excerpt">Raw land is often overlooked, but it's one of the most stable investments you can make in 2025.</p>
+        <div class="blog-meta"><span>April 14, 2025</span><span class="blog-meta-sep">·</span><span>5 min read</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP CTA -->
+<section id="app-cta">
+  <div class="app-cta-inner">
+    <div class="reveal">
+      <h2 class="app-cta-title">Search Properties<br>On The Go</h2>
+      <p class="app-cta-sub">Download the Maeva app and access thousands of listings, schedule viewings, and manage your property journey — all from your phone.</p>
+      <div class="app-buttons">
+        <a href="#" class="app-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          <div><div class="app-btn-label">Download on</div><div class="app-btn-store">App Store</div></div>
+        </a>
+        <a href="#" class="app-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.99-2.59-2.59-10.52 9.44zm-1.81-20.1C1.14 3.9 1 4.22 1 4.63v14.74c0 .4.14.73.38 1l.06.05 8.26-8.26v-.19L1.37 3.7l-.01-.04zM21.42 10.27l-2.33-1.35-2.93 2.93 2.93 2.93 2.36-1.36c.67-.39.67-1.03-.03-1.15zM3.18.24L15.3 7.23 12.71 9.82 2.19.38A1.13 1.13 0 013.18.24z"/></svg>
+          <div><div class="app-btn-label">Get it on</div><div class="app-btn-store">Google Play</div></div>
+        </a>
+      </div>
+    </div>
+    <div class="app-phone reveal d2">
+      <div class="app-phone-screen">
+        <div class="app-screen-img">
+          <svg width="40" height="40" viewBox="0 0 34 34" fill="none"><rect width="34" height="34" rx="8" fill="rgba(255,255,255,0.25)"/><path d="M17 7L27 15V27H21V21H13V27H7V15L17 7Z" fill="white"/></svg>
+        </div>
+        <div class="app-screen-bar"></div>
+        <div class="app-screen-bar-short"></div>
+        <div class="app-screen-btn">View Properties</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section id="partners">
+  <div class="partners-inner">
+    <div class="partners-label">Trusted Partners</div>
+    <div class="partners-logos">
+      <span class="partner-logo">Equinix</span>
+      <span class="partner-logo">PropTech</span>
+      <span class="partner-logo">Urban Co.</span>
+      <span class="partner-logo">Arconic</span>
+      <span class="partner-logo">Meridian</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-top">
+    <div>
+      <div style="display:flex;align-items:center;gap:9px;">
+        <svg width="30" height="30" viewBox="0 0 34 34" fill="none"><rect width="34" height="34" rx="8" fill="#1D3F88"/><path d="M17 7L27 15V27H21V21H13V27H7V15L17 7Z" fill="white"/></svg>
+        <span style="font-family:var(--ff-display);font-size:21px;font-weight:600;color:white;letter-spacing:0.02em;">Maeva</span>
+      </div>
+      <p class="footer-desc">Your trusted partner for buying, renting, and investing in premium real estate across the United States.</p>
+      <div class="footer-social">
+        <a href="#" class="social-btn">𝕏</a>
+        <a href="#" class="social-btn">ig</a>
+        <a href="#" class="social-btn">in</a>
+        <a href="#" class="social-btn">f</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Properties</div>
+      <ul class="footer-links">
+        <li><a href="#">Houses for Sale</a></li>
+        <li><a href="#">Apartments for Rent</a></li>
+        <li><a href="#">Land &amp; Plots</a></li>
+        <li><a href="#">Commercial Properties</a></li>
+        <li><a href="#">New Developments</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <ul class="footer-links">
+        <li><a href="#">Property Sales</a></li>
+        <li><a href="#">Rental Management</a></li>
+        <li><a href="#">Interior Design</a></li>
+        <li><a href="#">Investment Advisory</a></li>
+        <li><a href="#">Property Valuation</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Our Agents</a></li>
+        <li><a href="#">Journal</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Maeva Real Estate. All rights reserved.</span>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Counter animation
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const duration = 1800;
+  const steps = duration / 16;
+  const inc = target / steps;
+  let current = 0;
+  const timer = setInterval(() => {
+    current = Math.min(current + inc, target);
+    el.textContent = Math.floor(current).toLocaleString() + '+';
+    if (current >= target) clearInterval(timer);
+  }, 16);
+}
+
+// Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Counter observer
+const cio = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { animateCounter(e.target); cio.unobserve(e.target); }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.counter').forEach(el => cio.observe(el));
+
+// Search tab
+function setTab(btn, type) {
+  document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const sel = document.getElementById('type-sel');
+  if (type === 'land') sel.value = 'Land';
+  else if (type === 'rent') sel.value = 'Apartment';
+  else sel.value = 'Any Type';
+}
+
+// Property filter
+function filterProps(btn, type) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.property-card').forEach(card => {
+    card.style.display = (type === 'all' || card.dataset.type === type) ? 'block' : 'none';
+  });
+}
+
+// Prevent default on all links (demo)
+document.querySelectorAll('a[href="#"]').forEach(a => a.addEventListener('click', e => e.preventDefault()));
+</script>
+</body>
+</html>
