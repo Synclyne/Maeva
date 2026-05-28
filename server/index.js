@@ -9,6 +9,7 @@ const { sendErrorAlert } = require('./services/email');
 const app  = express();
 const PORT = process.env.PORT || 5000;
 
+app.set('trust proxy', 1);   // Vercel / any reverse-proxy sets X-Forwarded-For
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
