@@ -113,7 +113,7 @@ export default function Home() {
   const [area, setArea] = useState('');
   const [type, setType] = useState('');
   const [search, setSearch] = useState('');
-  const [featured, setFeatured] = useState([]);
+  const [featured, setFeatured] = useState(null);   // null = loading, [] = loaded (empty/error)
   const [stats, setStats] = useState({ total: 0 });
   const [partners, setPartners] = useState([]);
 
@@ -142,8 +142,12 @@ export default function Home() {
   const areas = county ? (kenyanLocations[county] || []) : [];
 
   useEffect(() => {
-    api.get('/listings?featured=true&limit=6').then(r => setFeatured(r.data.listings));
-    api.get('/listings?limit=1').then(r => setStats({ total: r.data.total }));
+    api.get('/listings?featured=true&limit=6')
+      .then(r => setFeatured(r.data.listings || []))
+      .catch(() => setFeatured([]));
+    api.get('/listings?limit=1')
+      .then(r => setStats({ total: r.data.total }))
+      .catch(() => {});
     api.get('/partners').then(r => setPartners(r.data)).catch(() => {});
   }, []);
 
@@ -300,19 +304,23 @@ export default function Home() {
             </Link>
           </div>
 
-          {featured.length === 0 ? (
+          {featured === null ? (
+            /* Loading skeletons — shown only while request is in-flight */
             <>
-              {/* Mobile skeleton scroll */}
               <div className="sm:hidden flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="shrink-0 w-[78vw]"><SkeletonCard /></div>
                 ))}
               </div>
-              {/* Desktop skeleton grid */}
               <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
               </div>
             </>
+          ) : featured.length === 0 ? (
+            /* Error / empty state */
+            <div className="text-center py-16 text-gray-400">
+              <p className="text-sm">Could not load listings. <button onClick={() => { setFeatured(null); api.get('/listings?featured=true&limit=6').then(r => setFeatured(r.data.listings || [])).catch(() => setFeatured([])); }} className="text-primary hover:underline">Try again</button></p>
+            </div>
           ) : (
             <>
               {/* Mobile horizontal carousel */}
