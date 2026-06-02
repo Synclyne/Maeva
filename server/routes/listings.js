@@ -6,7 +6,20 @@ const { notifyMatchingSavedSearches } = require('./searches');
 const { uploadToStorage, deleteFromStorage } = require('../services/storage');
 
 const router  = express.Router();
-const upload  = multer({ storage: multer.memoryStorage(), limits: { fileSize: 8 * 1024 * 1024 } });
+
+// Only allow actual image MIME types — blocks .php, .exe, .html etc.
+const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']);
+const upload  = multer({
+  storage: multer.memoryStorage(),
+  limits:  { fileSize: 8 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (ALLOWED_MIME.has(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(Object.assign(new Error('Only JPEG, PNG, WebP, GIF or AVIF images are allowed'), { status: 400 }));
+    }
+  },
+});
 
 /* ── parseListing helper ─────────────────────────────────── */
 function parseListing(l) {
@@ -68,7 +81,7 @@ router.get('/', async (req, res) => {
             search, featured, limit = 12, page = 1, sort = 'newest' } = req.query;
 
     const p = [];
-    let conditions = `l.is_active = 1 AND ${NOT_EXPIRED}`;
+    let conditions = `l.is_active = 1 AND u.is_active = 1 AND ${NOT_EXPIRED}`;
     if (type)        { conditions += ' AND LOWER(l.type) = LOWER($' + (p.push(type))        + ')'; }
     if (transaction) { conditions += ' AND LOWER(l.deal_type) = LOWER($' + (p.push(transaction)) + ')'; }
     if (county)      { conditions += ' AND l.county = $'       + (p.push(county));       }

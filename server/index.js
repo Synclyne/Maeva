@@ -10,8 +10,30 @@ const app  = express();
 const PORT = process.env.PORT || 5000;
 
 app.set('trust proxy', 1);   // Vercel / any reverse-proxy sets X-Forwarded-For
-app.use(cors({ origin: '*' }));
+
+/* ── CORS ────────────────────────────────────────────────── */
+const ALLOWED_ORIGINS = new Set([
+  'https://maeva.co.ke',
+  'https://www.maeva.co.ke',
+  'https://maeva-kenya.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:5173',
+]);
+app.use(cors({
+  origin: (origin, cb) => {
+    // Allow requests with no Origin header (server-to-server, curl, mobile apps)
+    if (!origin || ALLOWED_ORIGINS.has(origin)) return cb(null, true);
+    cb(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  credentials: true,
+}));
+
 app.use(express.json());
+
+/* ── Startup checks ──────────────────────────────────────── */
+if (!process.env.JWT_SECRET) {
+  console.warn('[WARN] JWT_SECRET env var is not set — using insecure default. Set this immediately in production!');
+}
 
 /* ── Security headers ────────────────────────────────────── */
 app.use((req, res, next) => {
