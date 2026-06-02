@@ -43,7 +43,9 @@ export default function AdminDashboard() {
     { id: 'enquiries', label: 'Enquiries', icon: <TabIcon d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />, badge: stats?.unreadEnquiries },
     { id: 'partners',  label: 'Partners',  icon: <TabIcon d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /> },
     { id: 'support',   label: 'Support',   icon: <TabIcon d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />, badge: openTickets },
-    { id: 'stats',     label: 'Stats',     icon: <TabIcon d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /> },
+    { id: 'mylistings', label: 'My Listings', icon: <TabIcon d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /> },
+    { id: 'homepage',  label: 'Homepage',   icon: <TabIcon d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /> },
+    { id: 'stats',     label: 'Stats',      icon: <TabIcon d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /> },
   ];
 
   return (
@@ -110,9 +112,11 @@ export default function AdminDashboard() {
         {tab === 'users'     && <AdminUsers     onAction={fetchStats} />}
         {tab === 'agencies'  && <AdminAgencies  onAction={fetchStats} />}
         {tab === 'enquiries' && <AdminEnquiries onAction={fetchStats} />}
-        {tab === 'partners'  && <AdminPartners />}
-        {tab === 'support'   && <AdminSupport onBadgeChange={setOpenTickets} />}
-        {tab === 'stats'     && <AdminStats stats={stats} />}
+        {tab === 'partners'   && <AdminPartners />}
+        {tab === 'support'    && <AdminSupport onBadgeChange={setOpenTickets} />}
+        {tab === 'mylistings' && <AdminMyListings />}
+        {tab === 'homepage'   && <AdminHomepage />}
+        {tab === 'stats'      && <AdminStats stats={stats} />}
       </div>
     </div>
   );
@@ -1404,6 +1408,256 @@ function AdminAgencies({ onAction }) {
               <button disabled={page >= pages} onClick={() => setPage(p => p + 1)} className="px-3 py-1.5 rounded-lg border text-sm disabled:opacity-40 hover:bg-gray-50">Next →</button>
             </div>
           )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── My Listings tab ─────────────────────────────────────── */
+function AdminMyListings() {
+  const toast = useToast();
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [busy, setBusy]         = useState(null);
+
+  const load = useCallback(() => {
+    setLoading(true);
+    api.get('/listings/mine')
+      .then(r => setListings(r.data))
+      .catch(() => toast.error('Could not load your listings'))
+      .finally(() => setLoading(false));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Permanently delete this listing?')) return;
+    setBusy(id + '-del');
+    try {
+      await api.delete(`/admin/listings/${id}`);
+      toast.success('Listing deleted');
+      load();
+    } catch { toast.error('Delete failed'); }
+    finally { setBusy(null); }
+  };
+
+  const handleToggle = async (id, isActive) => {
+    setBusy(id + '-tog');
+    try {
+      await api.patch(`/admin/listings/${id}/status`);
+      toast.success(isActive ? 'Listing hidden' : 'Listing activated');
+      load();
+    } catch { toast.error('Update failed'); }
+    finally { setBusy(null); }
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-display text-lg font-semibold text-gray-900">My Listings</h2>
+          <p className="text-sm text-gray-500 mt-0.5">{listings.length} listing{listings.length !== 1 ? 's' : ''} posted by you</p>
+        </div>
+        <a href="/post-listing"
+          className="btn-primary text-sm rounded-xl px-4 py-2 flex items-center gap-1.5 no-underline">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+          Post Listing
+        </a>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-16">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : listings.length === 0 ? (
+        <div className="text-center py-24 bg-white rounded-2xl border border-gray-100">
+          <div className="text-5xl mb-4">🏠</div>
+          <h3 className="font-semibold text-gray-700 mb-1">No listings yet</h3>
+          <p className="text-gray-400 text-sm mb-5">Post your first listing to get started</p>
+          <a href="/post-listing" className="btn-primary rounded-xl px-6 py-2.5 text-sm no-underline">Post a Listing</a>
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="divide-y divide-gray-50">
+            {listings.map(l => {
+              const img = l.images?.[0] || PLACEHOLDER;
+              const isActive = l.is_active === 1 || l.is_active === true;
+              return (
+                <div key={l.id} className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50/60 transition-colors">
+                  {/* Thumbnail */}
+                  <div className="w-16 h-12 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+                    <img src={img} alt={l.title} className="w-full h-full object-cover"
+                      onError={e => { e.target.src = PLACEHOLDER; }} />
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-gray-900 text-sm truncate">{l.title}</div>
+                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                      <span className="text-xs text-gray-400">{l.area}, {l.county}</span>
+                      <span className={`badge text-xs ${l.transaction === 'sale' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                        {l.transaction === 'sale' ? 'For Sale' : 'For Rent'}
+                      </span>
+                      {l.is_featured === 1 && <span className="badge text-xs bg-yellow-100 text-yellow-700">⭐ Featured</span>}
+                      <span className={`badge text-xs ${isActive ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
+                        {isActive ? 'Active' : 'Hidden'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Price */}
+                  <div className="shrink-0 hidden sm:block text-right">
+                    <div className="font-semibold text-gray-900 text-sm">
+                      KES {Number(l.price).toLocaleString()}
+                    </div>
+                    {l.price_period && <div className="text-xs text-gray-400">/{l.price_period}</div>}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <a href={`/listings/${l.id}`} target="_blank" rel="noreferrer"
+                      title="View listing" className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </a>
+                    <a href={`/post-listing?edit=${l.id}`}
+                      title="Edit listing" className="p-2 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-600 transition-colors">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    </a>
+                    <button onClick={() => handleToggle(l.id, isActive)} disabled={busy === l.id + '-tog'}
+                      title={isActive ? 'Hide listing' : 'Activate listing'}
+                      className={`p-2 rounded-lg transition-colors disabled:opacity-40 ${isActive ? 'hover:bg-orange-50 text-gray-400 hover:text-orange-600' : 'hover:bg-green-50 text-gray-400 hover:text-green-600'}`}>
+                      {isActive
+                        ? <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
+                        : <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      }
+                    </button>
+                    <button onClick={() => handleDelete(l.id)} disabled={busy === l.id + '-del'}
+                      title="Delete listing"
+                      className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-40">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path strokeLinecap="round" strokeLinejoin="round" d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4h4v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Homepage tab (county images) ────────────────────────── */
+function AdminHomepage() {
+  const toast = useToast();
+  const [counties, setCounties] = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [editing, setEditing]   = useState(null);  // id of the card being edited
+  const [form, setForm]         = useState({ image_url: '', description: '' });
+  const [saving, setSaving]     = useState(false);
+  const [preview, setPreview]   = useState('');
+
+  useEffect(() => {
+    api.get('/admin/county-images')
+      .then(r => setCounties(r.data))
+      .catch(() => toast.error('Could not load county images'))
+      .finally(() => setLoading(false));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const openEdit = (c) => {
+    setEditing(c.id);
+    setForm({ image_url: c.image_url, description: c.description });
+    setPreview(c.image_url);
+  };
+
+  const handleSave = async () => {
+    if (!form.image_url.trim()) return toast.error('Image URL cannot be empty');
+    setSaving(true);
+    try {
+      const { data } = await api.put(`/admin/county-images/${editing}`, form);
+      setCounties(prev => prev.map(c => c.id === editing ? data : c));
+      setEditing(null);
+      toast.success('County image updated');
+    } catch { toast.error('Save failed'); }
+    finally { setSaving(false); }
+  };
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h2 className="font-display text-lg font-semibold text-gray-900">Homepage — County Images</h2>
+        <p className="text-sm text-gray-500 mt-0.5">Click any county card to update its image and description</p>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-16">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {counties.map(c => (
+            <div key={c.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              {/* Current image preview */}
+              <div className="relative h-32 bg-gray-800 overflow-hidden">
+                <img
+                  src={editing === c.id ? (preview || c.image_url) : c.image_url}
+                  alt={c.county}
+                  className="w-full h-full object-cover"
+                  onLoad={e => e.target.classList.add('opacity-100')}
+                  style={{ opacity: 0, transition: 'opacity 0.3s' }}
+                  onError={e => { e.target.style.opacity = '0'; }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-3 left-4">
+                  <div className="font-bold text-white text-base">{c.county}</div>
+                  <div className="text-white/70 text-xs">{editing === c.id ? form.description : c.description}</div>
+                </div>
+              </div>
+
+              {/* Edit form */}
+              {editing === c.id ? (
+                <div className="p-4 space-y-3">
+                  <div>
+                    <label className="label">Image URL</label>
+                    <input
+                      className="input text-sm"
+                      placeholder="https://images.unsplash.com/photo-…"
+                      value={form.image_url}
+                      onChange={e => { setForm(f => ({ ...f, image_url: e.target.value })); setPreview(e.target.value); }}
+                    />
+                    <p className="text-xs text-gray-400 mt-1">Paste any image URL — Unsplash, your own upload, etc.</p>
+                  </div>
+                  <div>
+                    <label className="label">Description</label>
+                    <input
+                      className="input text-sm"
+                      placeholder="e.g. Capital city"
+                      value={form.description}
+                      onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex gap-2 pt-1">
+                    <button onClick={() => setEditing(null)}
+                      className="flex-1 btn-outline text-sm rounded-xl py-2">Cancel</button>
+                    <button onClick={handleSave} disabled={saving}
+                      className="flex-1 btn-primary text-sm rounded-xl py-2 disabled:opacity-50">
+                      {saving ? 'Saving…' : 'Save'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="px-4 py-3 flex items-center justify-between">
+                  <p className="text-xs text-gray-400 truncate mr-3">{c.image_url}</p>
+                  <button onClick={() => openEdit(c)}
+                    className="shrink-0 text-xs font-semibold text-primary hover:underline flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    Edit
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

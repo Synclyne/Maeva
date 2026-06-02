@@ -48,6 +48,16 @@ app.use('/api/viewings',      require('./routes/viewings'));
 app.use('/api/price-history', require('./routes/price-history'));
 app.use('/api/payments',      require('./routes/payments'));
 
+/* ── Public county images ────────────────────────────────── */
+app.get('/api/county-images', async (req, res) => {
+  try {
+    const rows = await db.query('SELECT * FROM county_images ORDER BY sort_order');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 /* ── Dynamic sitemap.xml ─────────────────────────────────── */
 app.get('/sitemap.xml', async (req, res) => {
   try {

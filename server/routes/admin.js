@@ -97,6 +97,31 @@ router.patch('/listings/:id/status', async (req, res) => {
   res.json({ is_active: !row.is_active });
 });
 
+/* ── County Images ───────────────────────────────────────── */
+router.get('/county-images', async (req, res) => {
+  try {
+    const rows = await db.query('SELECT * FROM county_images ORDER BY sort_order');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.put('/county-images/:id', async (req, res) => {
+  try {
+    const { image_url, description } = req.body;
+    if (!image_url) return res.status(400).json({ message: 'image_url is required' });
+    await db.query(
+      'UPDATE county_images SET image_url = ?, description = ?, updated_at = NOW() WHERE id = ?',
+      [image_url.trim(), (description || '').trim(), req.params.id]
+    );
+    const updated = await db.get('SELECT * FROM county_images WHERE id = ?', [req.params.id]);
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 /* ── Listings — hard delete ──────────────────────────────── */
 router.delete('/listings/:id', async (req, res) => {
   const row = await db.get('SELECT id FROM listings WHERE id = ?', [req.params.id]);

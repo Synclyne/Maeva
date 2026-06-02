@@ -89,7 +89,7 @@ const QUICK_TYPES = [
   },
 ];
 
-const POPULAR_COUNTIES = [
+const DEFAULT_COUNTIES = [
   { name: 'Nairobi',  desc: 'Capital city',   img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&fit=crop' },
   { name: 'Mombasa',  desc: 'Coastal city',   img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&fit=crop' },
   { name: 'Kisumu',   desc: 'Lakeside city',  img: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&fit=crop' },
@@ -116,6 +116,7 @@ export default function Home() {
   const [featured, setFeatured] = useState(null);   // null = loading, [] = loaded (empty/error)
   const [stats, setStats] = useState({ total: 0 });
   const [partners, setPartners] = useState([]);
+  const [countyImages, setCountyImages] = useState(DEFAULT_COUNTIES);
 
   // ── Hero video slideshow ───────────────────────────────────
   const [vidIdx, setVidIdx] = useState(0);
@@ -149,6 +150,13 @@ export default function Home() {
       .then(r => setStats({ total: r.data.total }))
       .catch(() => {});
     api.get('/partners').then(r => setPartners(r.data)).catch(() => {});
+    api.get('/county-images')
+      .then(r => {
+        if (r.data?.length) {
+          setCountyImages(r.data.map(c => ({ name: c.county, desc: c.description, img: c.image_url })));
+        }
+      })
+      .catch(() => {}); // silently keep DEFAULT_COUNTIES
   }, []);
 
   const handleSearch = (e) => {
@@ -346,7 +354,7 @@ export default function Home() {
           <h2 id="counties-heading" className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-1">Search by County</h2>
           <p className="text-gray-500 text-sm mb-6">Properties across Kenya's most popular counties</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            {POPULAR_COUNTIES.map(({ name, desc, img }) => (
+            {countyImages.map(({ name, desc, img }) => (
               <Link key={name} to={`/listings?county=${name}`} aria-label={`Properties in ${name} County`}
                 className="relative rounded-2xl h-28 sm:h-36 overflow-hidden group tap-highlight bg-gray-800">
                 <img
