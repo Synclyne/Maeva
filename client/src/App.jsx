@@ -148,10 +148,17 @@ function AppInner() {
   const { authModal, closeAuth } = useAuth();
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Skip to content — visible only on keyboard focus */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-semibold focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       <ScrollToTop />
       <ErrorToastListener />
       <Navbar />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1" tabIndex={-1} style={{ outline: 'none' }}
         <Routes>
           <Route path="/"                 element={<Home />} />
           <Route path="/listings"         element={<Listings />} />

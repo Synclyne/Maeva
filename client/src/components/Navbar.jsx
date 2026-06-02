@@ -30,17 +30,17 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled || !isHome ? 'bg-white shadow-sm' : 'bg-transparent'}`}>
+      <nav aria-label="Main navigation" className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled || !isHome ? 'bg-white shadow-sm' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 gap-6">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-              <svg width="32" height="32" viewBox="0 0 34 34" fill="none"><rect width="34" height="34" rx="8" fill="#1D3F88"/><path d="M17 7L27 15V27H21V21H13V27H7V15L17 7Z" fill="white"/></svg>
-              <span className={`font-display text-xl font-semibold ${scrolled || !isHome ? 'text-gray-900' : 'text-white'}`}>Maeva</span>
+            <Link to="/" aria-label="Maeva — Go to homepage" className="flex items-center gap-2 flex-shrink-0">
+              <svg width="32" height="32" viewBox="0 0 34 34" fill="none" aria-hidden="true"><rect width="34" height="34" rx="8" fill="#1D3F88"/><path d="M17 7L27 15V27H21V21H13V27H7V15L17 7Z" fill="white"/></svg>
+              <span className={`font-display text-xl font-semibold ${scrolled || !isHome ? 'text-gray-900' : 'text-white'}`} aria-hidden="true">Maeva</span>
             </Link>
 
             {/* Nav links desktop */}
-            <div className="hidden md:flex items-center gap-1 flex-1">
+            <div className="hidden md:flex items-center gap-1 flex-1" role="list">
               {[
                 { label: 'Buy', to: '/listings?transaction=sale' },
                 { label: 'Rent', to: '/listings?transaction=rent' },
@@ -48,12 +48,17 @@ export default function Navbar() {
                 { label: 'Land', to: '/listings?type=land' },
                 { label: 'Agencies', to: '/agencies' },
                 { label: 'Blog', to: '/blog' },
-              ].map(({ label, to }) => (
-                <Link key={label} to={to}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${scrolled || !isHome ? 'text-gray-600 hover:text-primary hover:bg-primary-pale' : 'text-white/90 hover:text-white hover:bg-white/10'}`}>
-                  {label}
-                </Link>
-              ))}
+              ].map(({ label, to }) => {
+                const basePath = to.split('?')[0];
+                const active = location.pathname === basePath;
+                return (
+                  <Link key={label} to={to}
+                    aria-current={active ? 'page' : undefined}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${scrolled || !isHome ? 'text-gray-600 hover:text-primary hover:bg-primary-pale' : 'text-white/90 hover:text-white hover:bg-white/10'}`}>
+                    {label}
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Right actions */}
@@ -69,18 +74,26 @@ export default function Navbar() {
               {user ? (
                 <>
                   {/* Wishlist */}
-                  <Link to="/wishlist" className={`relative p-2 rounded-lg transition-colors ${scrolled || !isHome ? 'text-gray-600 hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <Link
+                    to="/wishlist"
+                    aria-label={`Saved properties${wishlistIds.length > 0 ? ` (${wishlistIds.length})` : ''}`}
+                    className={`relative p-2 rounded-lg transition-colors ${scrolled || !isHome ? 'text-gray-600 hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                     </svg>
                     {wishlistIds.length > 0 && (
-                      <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-kenya-red text-white text-[10px] rounded-full flex items-center justify-center font-bold">{wishlistIds.length}</span>
+                      <span aria-hidden="true" className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-kenya-red text-white text-[10px] rounded-full flex items-center justify-center font-bold">{wishlistIds.length}</span>
                     )}
                   </Link>
 
                   {/* User menu */}
                   <div className="relative" ref={menuRef}>
-                    <button onClick={() => setUserMenu(p => !p)}
+                    <button
+                      onClick={() => setUserMenu(p => !p)}
+                      aria-haspopup="menu"
+                      aria-expanded={userMenu}
+                      aria-label={`Account menu for ${user.name}`}
                       className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${scrolled || !isHome ? 'bg-gray-100 hover:bg-gray-200 text-gray-700' : 'bg-white/10 hover:bg-white/20 text-white'}`}>
                       <div className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
                         {user.name[0].toUpperCase()}
@@ -90,7 +103,7 @@ export default function Navbar() {
                     </button>
 
                     {userMenu && (
-                      <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 text-sm">
+                      <div role="menu" aria-label="Account options" className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 text-sm">
                         <div className="px-4 py-2.5 border-b border-gray-100">
                           <div className="font-semibold text-gray-900">{user.name}</div>
                           <div className="text-xs text-gray-500 capitalize">{user.role}</div>
@@ -142,8 +155,14 @@ export default function Navbar() {
               )}
 
               {/* Mobile menu button */}
-              <button className={`md:hidden p-2 rounded-lg ${scrolled || !isHome ? 'text-gray-600' : 'text-white'}`} onClick={() => setMobileOpen(p => !p)}>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <button
+                className={`md:hidden p-2 rounded-lg ${scrolled || !isHome ? 'text-gray-600' : 'text-white'}`}
+                onClick={() => setMobileOpen(p => !p)}
+                aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                aria-expanded={mobileOpen}
+                aria-controls="mobile-nav"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
                   {mobileOpen ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/> : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/>}
                 </svg>
               </button>
@@ -153,7 +172,7 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1">
+          <div id="mobile-nav" className="md:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1">
             {[
               { label: 'Buy', to: '/listings?transaction=sale' },
               { label: 'Rent', to: '/listings?transaction=rent' },
