@@ -11,13 +11,28 @@ export default function AuthModal({ onClose, defaultTab = 'login' }) {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState('');
   const [success, setSuccess] = useState('');
-  const [form, setForm]       = useState({ name:'', email:'', password:'', role:'client', phone:'', company:'' });
+  const [form, setForm]       = useState({ name:'', email:'', password:'', role:'client', phone:'', company:'', dob:'' });
   const [agreedTerms, setAgreedTerms] = useState(false);
   const [agreedAge,   setAgreedAge]   = useState(false);
   const modalRef = useRef(null);
 
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
   const switchTab = (t) => { setTab(t); setError(''); setSuccess(''); setAgreedTerms(false); setAgreedAge(false); };
+
+  /* ── Age helpers ─────────────────────────────────────────── */
+  const calcAge = (dob) => {
+    if (!dob) return null;
+    const today = new Date();
+    const birth = new Date(dob);
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    return age;
+  };
+  const dobAge         = calcAge(form.dob);
+  const dobTooYoung    = form.role === 'realtor' && form.dob && dobAge !== null && dobAge < 18;
+  const dobMaxDate     = new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0];
+  const dobMinDate     = '1900-01-01';
 
   /* ── Focus trap + Escape to close ─────────────────────── */
   useEffect(() => {
@@ -154,17 +169,50 @@ export default function AuthModal({ onClose, defaultTab = 'login' }) {
                   </div>
                 </div>
                 {form.role === 'realtor' && (
-                  <div>
-                    <label htmlFor="auth-company" className="label">Company / Agency Name</label>
-                    <input
-                      id="auth-company"
-                      className="input"
-                      placeholder="e.g. Amani Properties Ltd"
-                      value={form.company}
-                      onChange={e => set('company', e.target.value)}
-                      autoComplete="organization"
-                    />
-                  </div>
+                  <>
+                    <div>
+                      <label htmlFor="auth-company" className="label">Company / Agency Name</label>
+                      <input
+                        id="auth-company"
+                        className="input"
+                        placeholder="e.g. Amani Properties Ltd"
+                        value={form.company}
+                        onChange={e => set('company', e.target.value)}
+                        autoComplete="organization"
+                      />
+                    </div>
+
+                    {/* Date of birth — required for agents, not stored after verification */}
+                    <div>
+                      <label htmlFor="auth-dob" className="label">
+                        Date of Birth
+                        <span className="text-xs text-gray-400 font-normal ml-1">(required for agents — not stored)</span>
+                      </label>
+                      <input
+                        id="auth-dob"
+                        className={`input ${dobTooYoung ? 'border-red-400 focus:ring-red-400' : ''}`}
+                        type="date"
+                        value={form.dob}
+                        onChange={e => set('dob', e.target.value)}
+                        max={dobMaxDate}
+                        min={dobMinDate}
+                        required
+                        aria-describedby={dobTooYoung ? 'dob-error' : undefined}
+                      />
+                      {dobTooYoung && (
+                        <p id="dob-error" role="alert" className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                          <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
+                          You must be 18 or older to register as an agent on Maeva.
+                        </p>
+                      )}
+                      {form.dob && !dobTooYoung && dobAge !== null && (
+                        <p className="mt-1.5 text-xs text-green-600 flex items-center gap-1">
+                          <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+                          Age verified — you meet the 18+ requirement.
+                        </p>
+                      )}
+                    </div>
+                  </>
                 )}
                 <div>
                   <label htmlFor="auth-phone" className="label">Phone Number</label>
@@ -255,7 +303,7 @@ export default function AuthModal({ onClose, defaultTab = 'login' }) {
 
             <button
               type="submit"
-              disabled={loading || (tab === 'register' && (!agreedTerms || !agreedAge))}
+              disabled={loading || (tab === 'register' && (!agreedTerms || !agreedAge || dobTooYoung || (form.role === 'realtor' && !form.dob)))}
               className="w-full btn-primary py-3 rounded-xl font-semibold text-base disabled:opacity-60"
               aria-busy={loading}
             >

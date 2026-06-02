@@ -12,7 +12,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'maeva_ke_secret_2025';
 /* ── Register ────────────────────────────────────────────── */
 router.post('/register', async (req, res) => {
   try {
-    const { name, password, phone, company } = req.body;
+    const { name, password, phone, company, dob } = req.body;
     const email = (req.body.email || '').trim().toLowerCase();
     const rawRole = req.body.role || 'client';
     const role = ['client', 'realtor'].includes(rawRole) ? rawRole : 'client';
@@ -26,6 +26,23 @@ router.post('/register', async (req, res) => {
 
     if (password.length < 8)
       return res.status(400).json({ message: 'Password must be at least 8 characters' });
+
+    // Age verification — required for agents, validated but NOT stored
+    if (role === 'realtor') {
+      if (!dob) return res.status(400).json({ message: 'Date of birth is required to register as an agent.' });
+
+      const birthDate = new Date(dob);
+      if (isNaN(birthDate.getTime())) return res.status(400).json({ message: 'Invalid date of birth.' });
+
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+
+      if (age < 18) return res.status(400).json({ message: 'You must be 18 or older to register as an agent on Maeva.' });
+      if (age > 120) return res.status(400).json({ message: 'Invalid date of birth.' });
+      // dob is deliberately NOT stored — verification only
+    }
 
     const existing = await db.get('SELECT id FROM users WHERE email = ?', [email]);
     if (existing) return res.status(400).json({ message: 'Email already registered' });
