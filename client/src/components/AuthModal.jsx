@@ -120,7 +120,7 @@ export default function AuthModal({ onClose, defaultTab = 'login' }) {
             {tab !== 'forgot' && (
               <div>
                 <label className="label">Password</label>
-                <input className="input" type="password" placeholder="••••••••" value={form.password} onChange={e => set('password', e.target.value)} required minLength={6} />
+                <input className="input" type="password" placeholder="••••••••" value={form.password} onChange={e => set('password', e.target.value)} required minLength={8} />
               </div>
             )}
 

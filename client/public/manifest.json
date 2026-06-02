@@ -1,0 +1,37 @@
+{
+  "name": "Maeva Kenya Real Estate",
+  "short_name": "Maeva",
+  "description": "Browse verified properties for sale and rent across all 47 Kenya counties.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1D3F88",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "business"],
+  "lang": "en-KE",
+  "dir": "ltr",
+  "scope": "/",
+  "screenshots": [
+    {
+      "src": "https://images.unsplash.com/photo-1611348524140-53c9a25263d6?w=390&h=844&fit=crop",
+      "sizes": "390x844",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Maeva home screen"
+    }
+  ]
+}

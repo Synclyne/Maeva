@@ -13,6 +13,16 @@ app.set('trust proxy', 1);   // Vercel / any reverse-proxy sets X-Forwarded-For
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
+/* ── Security headers ────────────────────────────────────── */
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
+
 /* ── Rate limiting ───────────────────────────────────────── */
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

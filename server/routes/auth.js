@@ -12,14 +12,20 @@ const JWT_SECRET = process.env.JWT_SECRET || 'maeva_ke_secret_2025';
 /* ── Register ────────────────────────────────────────────── */
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, phone, company } = req.body;
+    const { name, password, phone, company } = req.body;
+    const email = (req.body.email || '').trim().toLowerCase();
     const rawRole = req.body.role || 'client';
     const role = ['client', 'realtor'].includes(rawRole) ? rawRole : 'client';
 
     if (!name || !email || !password)
       return res.status(400).json({ message: 'Name, email and password are required' });
-    if (password.length < 6)
-      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+
+    // Basic email format check
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return res.status(400).json({ message: 'Please enter a valid email address' });
+
+    if (password.length < 8)
+      return res.status(400).json({ message: 'Password must be at least 8 characters' });
 
     const existing = await db.get('SELECT id FROM users WHERE email = ?', [email]);
     if (existing) return res.status(400).json({ message: 'Email already registered' });
@@ -42,7 +48,8 @@ router.post('/register', async (req, res) => {
 /* ── Login ───────────────────────────────────────────────── */
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const email = (req.body.email || '').trim().toLowerCase();
+    const { password } = req.body;
     const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
     if (!user) return res.status(400).json({ message: 'Invalid email or password' });
 
