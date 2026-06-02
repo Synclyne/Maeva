@@ -4,6 +4,7 @@ const db       = require('../db/db');
 const auth     = require('../middleware/auth');
 const { notifyMatchingSavedSearches } = require('./searches');
 const { uploadToStorage, deleteFromStorage } = require('../services/storage');
+const { sendWishlistStatusAlert } = require('../services/email');
 
 const router  = express.Router();
 
@@ -163,6 +164,21 @@ router.patch('/:id/status', auth, async (req, res) => {
     return res.status(403).json({ message: 'Forbidden' });
   await db.query('UPDATE listings SET status = ? WHERE id = ?', [status, req.params.id]);
   res.json({ ok: true, status });
+
+  // Notify wishlist users when a property is sold or rented — fire-and-forget
+  if (status === 'sold' || status === 'rented') {
+    db.query(
+      `SELECT u.name, u.email FROM wishlists w
+       JOIN users u ON w.user_id = u.id
+       WHERE w.listing_id = ? AND u.is_active = 1`,
+      [listing.id]
+    ).then(users => {
+      users.forEach(u =>
+        sendWishlistStatusAlert(u.email, u.name, listing, status)
+          .catch(err => console.error('[email] wishlist-alert:', err.message))
+      );
+    }).catch(() => {});
+  }
 });
 
 /* ── POST create listing ─────────────────────────────────── */

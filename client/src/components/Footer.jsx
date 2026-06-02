@@ -93,7 +93,7 @@ export default function Footer() {
             <h4 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4">Company</h4>
             <ul className="space-y-2.5">
               {[
-                ['About Us',       '#'],
+                ['About Us',       '/about'],
                 ['Our Agencies',   '/agencies'],
                 ['Market Insights', '/blog'],
                 ['Post a Listing', '/post-listing'],

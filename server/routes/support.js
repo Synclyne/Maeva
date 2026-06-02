@@ -1,6 +1,7 @@
 const express = require('express');
 const db      = require('../db/db');
 const auth    = require('../middleware/auth');
+const { sendSupportConfirmation, sendSupportAdminAlert } = require('../services/email');
 
 const router = express.Router();
 
@@ -38,6 +39,13 @@ router.post('/', async (req, res) => {
     id: row.id,
     message: "Your ticket has been submitted. We'll get back to you within 24–48 hours.",
   });
+
+  // Fire-and-forget — emails never block or fail the response
+  const ticket = { id: row.id, name: name.trim(), email: email.trim().toLowerCase(), category: cat, subject: subject.trim(), message: message.trim() };
+  sendSupportConfirmation(ticket.email, ticket.name, ticket.id, ticket.subject)
+    .catch(err => console.error('[email] support-confirm:', err.message));
+  sendSupportAdminAlert(ticket)
+    .catch(err => console.error('[email] support-admin:', err.message));
 });
 
 /* ── Get own tickets (authenticated users) ─────────────────── */

@@ -28,6 +28,7 @@ const Compare          = lazy(() => import('./pages/Compare'));
 const Blog             = lazy(() => import('./pages/Blog'));
 const BlogPost         = lazy(() => import('./pages/BlogPost'));
 const AreaGuide        = lazy(() => import('./pages/AreaGuide'));
+const About            = lazy(() => import('./pages/About'));
 
 /* ── Shared page-transition fallback ────────────────────────────── */
 function PageLoader() {
@@ -181,6 +182,7 @@ function AppInner() {
           <Route path="/blog"             element={<Blog />} />
           <Route path="/blog/:slug"       element={<BlogPost />} />
           <Route path="/area/:county"     element={<AreaGuide />} />
+          <Route path="/about"            element={<About />} />
           <Route path="/reset-password"   element={<ResetPassword />} />
           <Route path="/privacy"          element={<PrivacyPolicy />} />
           <Route path="/terms"            element={<TermsOfService />} />

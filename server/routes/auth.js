@@ -4,7 +4,7 @@ const jwt      = require('jsonwebtoken');
 const crypto   = require('crypto');
 const db       = require('../db/db');
 const auth     = require('../middleware/auth');
-const { sendPasswordReset } = require('../services/email');
+const { sendPasswordReset, sendWelcomeEmail } = require('../services/email');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'maeva_ke_secret_2025';
@@ -56,6 +56,9 @@ router.post('/register', async (req, res) => {
     const user  = { id: row.id, name, email, role, phone: phone || null, company: company || null };
     const token = jwt.sign({ id: user.id, role }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, user });
+
+    // Fire-and-forget welcome email — never delay the response
+    sendWelcomeEmail(email, name, role).catch(err => console.error('[email] welcome:', err.message));
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
