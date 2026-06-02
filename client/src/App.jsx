@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider, useToast } from './context/ToastContext';
@@ -8,24 +8,35 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 import CompareBar from './components/CompareBar';
-import Home from './pages/Home';
-import Listings from './pages/Listings';
-import ListingDetail from './pages/ListingDetail';
-import RealtorDashboard from './pages/RealtorDashboard';
-import PostListing from './pages/PostListing';
-import Wishlist from './pages/Wishlist';
-import AdminDashboard from './pages/AdminDashboard';
-import RealtorProfile from './pages/RealtorProfile';
-import AgenciesDirectory from './pages/AgenciesDirectory';
-import ResetPassword from './pages/ResetPassword';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsOfService from './pages/TermsOfService';
-import CookiePolicy from './pages/CookiePolicy';
-import Support from './pages/Support';
-import Compare from './pages/Compare';
-import Blog from './pages/Blog';
-import BlogPost from './pages/BlogPost';
-import AreaGuide from './pages/AreaGuide';
+
+/* ── Page chunks — loaded on demand, one chunk per route ─────────── */
+const Home             = lazy(() => import('./pages/Home'));
+const Listings         = lazy(() => import('./pages/Listings'));
+const ListingDetail    = lazy(() => import('./pages/ListingDetail'));
+const RealtorDashboard = lazy(() => import('./pages/RealtorDashboard'));
+const PostListing      = lazy(() => import('./pages/PostListing'));
+const Wishlist         = lazy(() => import('./pages/Wishlist'));
+const AdminDashboard   = lazy(() => import('./pages/AdminDashboard'));
+const RealtorProfile   = lazy(() => import('./pages/RealtorProfile'));
+const AgenciesDirectory= lazy(() => import('./pages/AgenciesDirectory'));
+const ResetPassword    = lazy(() => import('./pages/ResetPassword'));
+const PrivacyPolicy    = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService   = lazy(() => import('./pages/TermsOfService'));
+const CookiePolicy     = lazy(() => import('./pages/CookiePolicy'));
+const Support          = lazy(() => import('./pages/Support'));
+const Compare          = lazy(() => import('./pages/Compare'));
+const Blog             = lazy(() => import('./pages/Blog'));
+const BlogPost         = lazy(() => import('./pages/BlogPost'));
+const AreaGuide        = lazy(() => import('./pages/AreaGuide'));
+
+/* ── Shared page-transition fallback ────────────────────────────── */
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" aria-label="Loading page" />
+    </div>
+  );
+}
 
 function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth();
@@ -159,6 +170,7 @@ function AppInner() {
       <ErrorToastListener />
       <Navbar />
       <main id="main-content" className="flex-1" tabIndex={-1} style={{ outline: 'none' }}>
+        <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/"                 element={<Home />} />
           <Route path="/listings"         element={<Listings />} />
@@ -181,6 +193,7 @@ function AppInner() {
           <Route path="/post-listing/:id" element={<ProtectedRoute role="realtor"><PostListing /></ProtectedRoute>} />
           <Route path="/admin"            element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
         </Routes>
+        </Suspense>
       </main>
       <Footer />
       <BottomNav />

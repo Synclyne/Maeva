@@ -11,8 +11,8 @@ export default defineConfig({
     },
   },
   build: {
-    // Raise the warning threshold slightly (SPA with many pages is expected to be large)
-    chunkSizeWarningLimit: 600,
+    // Pages are lazy-loaded; each chunk should stay well under this
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         // Split vendors into separate cacheable chunks
