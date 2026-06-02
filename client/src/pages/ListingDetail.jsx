@@ -402,6 +402,14 @@ export default function ListingDetail() {
             {/* Mortgage calculator — sale listings only */}
             {listing.transaction === 'sale' && <MortgageCalculator price={listing.price} />}
 
+            {/* Legal / financial disclaimer */}
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3 text-xs text-amber-800" role="note" aria-label="Important disclaimer">
+              <svg className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+              <p className="leading-relaxed">
+                <strong>Disclaimer:</strong> Property listings are provided for informational purposes only. Maeva does not provide financial, investment, legal, or tax advice. Prices and details are subject to change without notice. Always conduct independent due diligence — including a title deed search and independent valuation — and seek professional advice before entering any property transaction. See our <a href="/terms" className="underline hover:text-amber-900">Terms of Service</a> for full details.
+              </p>
+            </div>
+
             {/* Enquiry form — hidden when agent has disabled enquiries */}
             {listing.accept_enquiries !== 0
               ? <EnquiryForm listing={listing} />

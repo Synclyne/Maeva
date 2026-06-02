@@ -88,68 +88,121 @@ export default function PrivacyPolicy() {
             </ul>
           </Section>
 
-          <Section title="6. Your Rights">
-            <p>Under the Kenya Data Protection Act, 2019, you have the following rights:</p>
+          <Section title="6. Legal Basis for Processing">
+            <p>We process your personal data only where we have a valid legal basis. Depending on the activity, we rely on:</p>
+            <ul>
+              <li><strong>Contract performance (Art. 6(1)(b) GDPR / KDPA s.30(1)(b)):</strong> Processing necessary to provide the services you requested — authentication, listing management, enquiry delivery.</li>
+              <li><strong>Legitimate interests (Art. 6(1)(f) GDPR / KDPA s.30(1)(f)):</strong> Security monitoring, fraud prevention, rate limiting, and platform analytics. We have assessed that these interests do not override your rights.</li>
+              <li><strong>Legal obligation (Art. 6(1)(c) GDPR / KDPA s.30(1)(c)):</strong> Compliance with Kenyan law, court orders, or regulatory requirements.</li>
+              <li><strong>Consent:</strong> Where required (e.g., optional marketing communications), we will obtain your explicit prior consent. You may withdraw consent at any time.</li>
+            </ul>
+          </Section>
+
+          <Section title="7. Your Rights">
+            <p>You have the following rights over your personal data. These apply regardless of where you are located; specific additional rights for EU, California, and South African residents are noted below.</p>
             <ul>
               <li><strong>Right of access:</strong> Request a copy of the personal data we hold about you.</li>
               <li><strong>Right to rectification:</strong> Correct inaccurate or incomplete data.</li>
-              <li><strong>Right to erasure:</strong> Request deletion of your personal data (subject to legal obligations).</li>
+              <li><strong>Right to erasure ("right to be forgotten"):</strong> Request deletion of your personal data, subject to legal retention obligations.</li>
               <li><strong>Right to restriction:</strong> Request that we limit processing of your data in certain circumstances.</li>
-              <li><strong>Right to object:</strong> Object to processing of your data for direct marketing.</li>
-              <li><strong>Right to portability:</strong> Receive your data in a structured, machine-readable format.</li>
+              <li><strong>Right to object:</strong> Object to processing based on legitimate interests or for direct marketing at any time.</li>
+              <li><strong>Right to portability:</strong> Receive your data in a structured, machine-readable format (JSON or CSV on request).</li>
+              <li><strong>Right to withdraw consent:</strong> Where we rely on consent, you may withdraw it at any time without affecting processing already carried out.</li>
             </ul>
-            <p>
-              To exercise any of these rights, please contact us at <a href="mailto:privacy@maeva.co.ke" className="text-primary hover:underline">privacy@maeva.co.ke</a>. We will respond within 30 days.
-            </p>
-          </Section>
+            <p>To exercise any of these rights, contact <a href="mailto:privacy@maeva.co.ke" className="text-primary hover:underline">privacy@maeva.co.ke</a>. We will respond within <strong>30 days</strong> (extendable by a further 60 days for complex requests with notice).</p>
 
-          <Section title="7. Cookies">
-            <p>We use the following types of cookies:</p>
+            <SubHeading>7.1 EU/EEA Residents — GDPR</SubHeading>
+            <p>
+              If you are located in the European Union or European Economic Area, the General Data Protection Regulation (GDPR) (EU) 2016/679 applies to our processing of your data. In addition to the rights above, you have the right to lodge a complaint with your local supervisory authority. A list of EU data protection authorities is available at <a href="https://edpb.europa.eu/about-edpb/about-edpb/members_en" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">edpb.europa.eu</a>.
+            </p>
+            <p>
+              Our primary data centre is located in the EU (Frankfurt, Germany — Supabase eu-central-1). No transfer to a third country with inadequate protection occurs. Where data is processed by sub-processors in other regions, we rely on Standard Contractual Clauses (SCCs) approved by the European Commission.
+            </p>
+
+            <SubHeading>7.2 California Residents — CCPA / CPRA</SubHeading>
+            <p>
+              If you are a California resident, the California Consumer Privacy Act (CCPA) as amended by the California Privacy Rights Act (CPRA) grants you additional rights:
+            </p>
             <ul>
-              <li><strong>Essential cookies:</strong> Required for authentication and security. Cannot be disabled.</li>
-              <li><strong>Analytics cookies:</strong> Help us understand how visitors use the platform (e.g., page views, popular listings). You may opt out by adjusting your browser settings.</li>
+              <li><strong>Right to Know:</strong> The categories and specific pieces of personal information collected about you.</li>
+              <li><strong>Right to Delete:</strong> Deletion of personal information we have collected (subject to exceptions).</li>
+              <li><strong>Right to Opt-Out of Sale:</strong> We do <strong>not sell</strong> personal information. We do not share personal information for cross-context behavioural advertising.</li>
+              <li><strong>Right to Non-Discrimination:</strong> We will not discriminate against you for exercising your CCPA rights.</li>
+              <li><strong>Right to Correct:</strong> Correct inaccurate personal information we hold about you.</li>
             </ul>
-            <p>We do not use advertising or tracking cookies from third-party ad networks.</p>
-          </Section>
+            <p>To exercise CCPA rights, contact <a href="mailto:privacy@maeva.co.ke" className="text-primary hover:underline">privacy@maeva.co.ke</a>. We will verify your identity before processing requests.</p>
 
-          <Section title="8. Data Security">
+            <SubHeading>7.3 South African Residents — POPIA</SubHeading>
             <p>
-              We implement industry-standard security measures including HTTPS encryption, hashed passwords (bcrypt), JWT-based authentication, and rate limiting on sensitive endpoints. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.
+              If you are located in South Africa, the Protection of Personal Information Act, 2013 (POPIA) applies. You have rights of access, correction, deletion, and objection substantially equivalent to those listed above. You may also lodge a complaint with the <strong>Information Regulator (South Africa)</strong> at <a href="https://www.justice.gov.za/inforeg/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">justice.gov.za/inforeg</a>.
             </p>
-            <p>
-              If you discover a security vulnerability, please report it responsibly to <a href="mailto:security@maeva.co.ke" className="text-primary hover:underline">security@maeva.co.ke</a>.
-            </p>
-          </Section>
 
-          <Section title="9. Children's Privacy">
+            <SubHeading>7.4 UK Residents — UK GDPR</SubHeading>
             <p>
-              Maeva is not intended for use by individuals under the age of 18. We do not knowingly collect personal information from minors. If we become aware that a minor has provided us with personal data, we will delete it promptly.
+              The UK General Data Protection Regulation (UK GDPR) and Data Protection Act 2018 apply to UK residents. Your rights are equivalent to those under EU GDPR. You may lodge a complaint with the <strong>Information Commissioner's Office (ICO)</strong> at <a href="https://ico.org.uk" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">ico.org.uk</a>.
             </p>
           </Section>
 
-          <Section title="10. Third-Party Links">
+          <Section title="8. International Data Transfers">
+            <p>Maeva uses the following third-party infrastructure providers, which may process your data in their respective locations:</p>
+            <ul>
+              <li><strong>Supabase (database &amp; storage):</strong> EU region — Frankfurt, Germany (AWS eu-central-1). Supabase is GDPR-compliant and provides a Data Processing Agreement (DPA).</li>
+              <li><strong>Vercel (hosting &amp; CDN):</strong> Global edge network. Vercel is GDPR-compliant and provides a DPA. Data at rest is processed in the US; Vercel relies on Standard Contractual Clauses for EU data transfers.</li>
+              <li><strong>Email delivery (Nodemailer/SMTP):</strong> Transactional emails (password resets, enquiry notifications) are sent via our configured SMTP provider. No marketing emails are sent without consent.</li>
+            </ul>
             <p>
-              Our platform may contain links to third-party websites (e.g., agent company websites, social media). We are not responsible for the privacy practices of these external sites and encourage you to review their privacy policies.
+              All sub-processors are contractually bound to process data only on our instructions, maintain appropriate security measures, and not use your data for their own purposes.
             </p>
           </Section>
 
-          <Section title="11. Changes to This Policy">
+          <Section title="9. Cookies &amp; Browser Storage">
             <p>
-              We may update this Privacy Policy from time to time. We will notify registered users of material changes via email and by updating the effective date at the top of this page. Continued use of Maeva after changes constitutes acceptance of the updated policy.
+              We use only <strong>essential</strong> browser storage — a JWT authentication token in localStorage to keep you signed in. We do <strong>not</strong> use analytics cookies, advertising cookies, tracking pixels, or any third-party cookies. For full details see our <Link to="/cookies" className="text-primary hover:underline">Cookie Policy</Link>.
             </p>
           </Section>
 
-          <Section title="12. Contact Us">
-            <p>If you have questions about this Privacy Policy or how we handle your data, please contact:</p>
+          <Section title="10. Data Security">
+            <p>
+              We implement industry-standard security measures including: TLS/HTTPS encryption in transit, bcrypt password hashing (cost factor 10), JWT-based stateless authentication, rate limiting on authentication endpoints, HTTP security headers (X-Frame-Options, X-Content-Type-Options, CSP), Row-Level Security on all database tables, and restricted database access. However, no method of transmission over the internet is 100% secure.
+            </p>
+            <p>
+              We operate a responsible disclosure programme. If you discover a security vulnerability, please report it to <a href="mailto:security@maeva.co.ke" className="text-primary hover:underline">security@maeva.co.ke</a>. We commit to acknowledging reports within 48 hours and resolving critical issues within 30 days.
+            </p>
+          </Section>
+
+          <Section title="11. Children's Privacy">
+            <p>
+              Maeva is strictly for users aged <strong>18 and over</strong>. We do not knowingly collect personal data from anyone under 18. In the EU, we do not knowingly collect data from anyone under 16. If you believe a minor has provided us with data, please contact <a href="mailto:privacy@maeva.co.ke" className="text-primary hover:underline">privacy@maeva.co.ke</a> and we will delete it promptly. This policy is consistent with the U.S. Children's Online Privacy Protection Act (COPPA), EU GDPR Article 8, and Kenya Data Protection Act s.25.
+            </p>
+          </Section>
+
+          <Section title="12. Third-Party Links">
+            <p>
+              Our platform may contain links to third-party websites (e.g., agent company websites, Google Maps, social media). We are not responsible for the privacy practices of these external sites and encourage you to review their own privacy policies before providing any personal information.
+            </p>
+          </Section>
+
+          <Section title="13. Changes to This Policy">
+            <p>
+              We may update this Privacy Policy from time to time. We will notify registered users of material changes via email with at least <strong>14 days' notice</strong> and by updating the effective date at the top of this page. For non-material changes, notice will be provided by updating the date only.
+            </p>
+          </Section>
+
+          <Section title="14. Contact &amp; Supervisory Authorities">
+            <p>For questions, data requests, or complaints regarding this Privacy Policy:</p>
             <div className="bg-gray-50 rounded-xl p-5 text-sm space-y-1 not-prose">
-              <p><strong>Maeva Real Estate Kenya</strong></p>
+              <p><strong>Maeva Real Estate Kenya — Data Controller</strong></p>
               <p>Email: <a href="mailto:privacy@maeva.co.ke" className="text-primary hover:underline">privacy@maeva.co.ke</a></p>
               <p>Support: <Link to="/support" className="text-primary hover:underline">maeva.co.ke/support</Link></p>
               <p>Nairobi, Kenya</p>
             </div>
-            <p className="text-sm text-gray-500 mt-4">
-              You also have the right to lodge a complaint with the <strong>Office of the Data Protection Commissioner (ODPC)</strong> Kenya if you believe your rights have been violated.
-            </p>
+            <p className="text-sm text-gray-500 mt-4">You have the right to lodge a complaint with your local data protection authority:</p>
+            <ul className="text-sm text-gray-500">
+              <li><strong>Kenya:</strong> Office of the Data Protection Commissioner (ODPC) — <a href="https://www.odpc.go.ke" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">odpc.go.ke</a></li>
+              <li><strong>EU/EEA:</strong> Your national supervisory authority — <a href="https://edpb.europa.eu/about-edpb/about-edpb/members_en" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">edpb.europa.eu</a></li>
+              <li><strong>UK:</strong> Information Commissioner's Office — <a href="https://ico.org.uk" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">ico.org.uk</a></li>
+              <li><strong>South Africa:</strong> Information Regulator — <a href="https://www.justice.gov.za/inforeg/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">justice.gov.za/inforeg</a></li>
+            </ul>
           </Section>
         </div>
       </div>

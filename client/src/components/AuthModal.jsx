@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api from '../lib/api';
@@ -11,10 +12,12 @@ export default function AuthModal({ onClose, defaultTab = 'login' }) {
   const [error, setError]     = useState('');
   const [success, setSuccess] = useState('');
   const [form, setForm]       = useState({ name:'', email:'', password:'', role:'client', phone:'', company:'' });
+  const [agreedTerms, setAgreedTerms] = useState(false);
+  const [agreedAge,   setAgreedAge]   = useState(false);
   const modalRef = useRef(null);
 
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
-  const switchTab = (t) => { setTab(t); setError(''); setSuccess(''); };
+  const switchTab = (t) => { setTab(t); setError(''); setSuccess(''); setAgreedTerms(false); setAgreedAge(false); };
 
   /* ── Focus trap + Escape to close ─────────────────────── */
   useEffect(() => {
@@ -214,9 +217,45 @@ export default function AuthModal({ onClose, defaultTab = 'login' }) {
               </div>
             )}
 
+            {/* Legal consent — registration only */}
+            {tab === 'register' && (
+              <div className="space-y-3 py-1">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    id="agree-terms"
+                    checked={agreedTerms}
+                    onChange={e => setAgreedTerms(e.target.checked)}
+                    required
+                    className="mt-0.5 w-4 h-4 rounded border-gray-300 text-primary accent-primary flex-shrink-0"
+                  />
+                  <span className="text-xs text-gray-600 leading-relaxed">
+                    I have read and agree to the{' '}
+                    <Link to="/terms" target="_blank" className="text-primary hover:underline font-medium">Terms of Service</Link>
+                    {' '}and{' '}
+                    <Link to="/privacy" target="_blank" className="text-primary hover:underline font-medium">Privacy Policy</Link>
+                    . I understand that Maeva does not provide financial or legal advice.
+                  </span>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    id="agree-age"
+                    checked={agreedAge}
+                    onChange={e => setAgreedAge(e.target.checked)}
+                    required
+                    className="mt-0.5 w-4 h-4 rounded border-gray-300 text-primary accent-primary flex-shrink-0"
+                  />
+                  <span className="text-xs text-gray-600 leading-relaxed">
+                    I confirm that I am <strong>18 years of age or older</strong>. Maeva is not available to persons under 18.
+                  </span>
+                </label>
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (tab === 'register' && (!agreedTerms || !agreedAge))}
               className="w-full btn-primary py-3 rounded-xl font-semibold text-base disabled:opacity-60"
               aria-busy={loading}
             >
