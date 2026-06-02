@@ -158,7 +158,7 @@ function AppInner() {
       <ScrollToTop />
       <ErrorToastListener />
       <Navbar />
-      <main id="main-content" className="flex-1" tabIndex={-1} style={{ outline: 'none' }}
+      <main id="main-content" className="flex-1" tabIndex={-1} style={{ outline: 'none' }}>
         <Routes>
           <Route path="/"                 element={<Home />} />
           <Route path="/listings"         element={<Listings />} />
