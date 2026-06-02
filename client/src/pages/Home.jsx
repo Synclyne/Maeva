@@ -11,6 +11,13 @@ const HERO_VIDEOS = [
   '/videos/hero3.mp4',
 ];
 
+/* Fallback poster images shown while video loads or if it fails to play */
+const HERO_POSTERS = [
+  'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80',
+  'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1920&q=80',
+  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1920&q=80',
+];
+
 const QUICK_TYPES = [
   {
     label: 'Houses', type: 'house', bg: 'from-blue-500 to-blue-600',
@@ -173,7 +180,7 @@ export default function Home() {
     <div className="has-bottom-nav">
 
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-black" aria-label="Search for property in Kenya">
+      <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-gray-900" aria-label="Search for property in Kenya">
 
         {/* Video slideshow — three videos crossfade on end */}
         {HERO_VIDEOS.map((src, i) => (
@@ -181,12 +188,14 @@ export default function Home() {
             key={i}
             ref={videoRefs[i]}
             src={src}
+            poster={HERO_POSTERS[i]}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${i === vidIdx ? 'opacity-100' : 'opacity-0'}`}
             muted
             playsInline
             autoPlay={i === 0}
             preload={i === 0 ? 'auto' : 'none'}
             onEnded={i === vidIdx ? handleVideoEnd : undefined}
+            onError={() => { if (i === vidIdx) handleVideoEnd(); }}
             aria-hidden="true"
           />
         ))}
