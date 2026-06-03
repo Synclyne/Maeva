@@ -12,7 +12,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'maeva_ke_secret_2025';
 /* ── Register ────────────────────────────────────────────── */
 router.post('/register', async (req, res) => {
   try {
-    const { name, password, phone, company, dob } = req.body;
+    const name    = (req.body.name    || '').trim();
+    const { password, phone, company, dob } = req.body;
     const email = (req.body.email || '').trim().toLowerCase();
     const rawRole = req.body.role || 'client';
     const role = ['client', 'realtor'].includes(rawRole) ? rawRole : 'client';
@@ -102,7 +103,7 @@ router.get('/me', auth, async (req, res) => {
 /* ── Forgot password ─────────────────────────────────────── */
 router.post('/forgot-password', async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = (req.body.email || '').trim().toLowerCase();
     if (!email) return res.status(400).json({ message: 'Email is required' });
 
     const user = await db.get('SELECT id, name, email FROM users WHERE email = ?', [email]);
@@ -125,7 +126,7 @@ router.post('/reset-password', async (req, res) => {
   try {
     const { token, password } = req.body;
     if (!token || !password) return res.status(400).json({ message: 'Token and new password are required' });
-    if (password.length < 6) return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    if (password.length < 8) return res.status(400).json({ message: 'Password must be at least 8 characters' });
 
     // reset_expires is stored as ISO string text — cast to TIMESTAMPTZ for comparison
     const user = await db.get(

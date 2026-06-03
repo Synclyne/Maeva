@@ -10,11 +10,14 @@ types.setTypeParser(1700, val => (val == null ? null : parseFloat(val)));
 
 const isSupabase = (process.env.DATABASE_URL || '').includes('supabase');
 
+// Vercel serverless: each invocation is its own process — a large pool wastes
+// Supabase connections. Use 2 so burst requests in one invocation don't stall,
+// but we don't blow through the Supabase connection limit.
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: isSupabase ? { rejectUnauthorized: false } : false,
-  max: 10,
-  idleTimeoutMillis: 30000,
+  max: 2,
+  idleTimeoutMillis: 10000,
   connectionTimeoutMillis: 5000,
 });
 

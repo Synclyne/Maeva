@@ -158,7 +158,10 @@ router.patch('/:id/status', auth, async (req, res) => {
   const VALID = ['available', 'under_offer', 'sold', 'rented'];
   if (!VALID.includes(status)) return res.status(400).json({ message: `status must be one of: ${VALID.join(', ')}` });
 
-  const listing = await db.get('SELECT * FROM listings WHERE id = ?', [req.params.id]);
+  const listing = await db.get(
+    'SELECT id, user_id, title, area, county, price, transaction_type FROM listings WHERE id = ?',
+    [req.params.id]
+  );
   if (!listing) return res.status(404).json({ message: 'Not found' });
   if (listing.user_id !== req.user.id && req.user.role !== 'admin')
     return res.status(403).json({ message: 'Forbidden' });
