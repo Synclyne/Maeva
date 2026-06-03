@@ -11,12 +11,13 @@
  *   APP_URL             (defaults to https://maeva.co.ke)
  */
 
+const https    = require('https');
 const APP_URL      = process.env.APP_URL      || 'https://maeva.co.ke';
 const SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL || 'brandonarocho4@icloud.com';
 const SENDER_NAME  = process.env.BREVO_SENDER_NAME  || 'Maeva Kenya';
 const ADMIN_EMAIL  = process.env.ADMIN_EMAIL        || 'brandonarocho4@gmail.com';
 
-/* ── Core send function ─────────────────────────────────────── */
+/* ── Core send function — uses built-in https (no fetch/undici) ─ */
 async function sendMail({ to, subject, html, text }) {
   if (!process.env.BREVO_API_KEY) {
     console.log('\n📧  EMAIL (BREVO_API_KEY not set — showing in console)');
@@ -27,29 +28,47 @@ async function sendMail({ to, subject, html, text }) {
     return;
   }
 
-  const body = {
+  const payload = JSON.stringify({
     sender:      { name: SENDER_NAME, email: SENDER_EMAIL },
     to:          [{ email: to }],
     subject,
     htmlContent: html,
     ...(text ? { textContent: text } : {}),
-  };
-
-  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-    method:  'POST',
-    headers: {
-      'api-key':      process.env.BREVO_API_KEY,
-      'content-type': 'application/json',
-      'accept':       'application/json',
-    },
-    body: JSON.stringify(body),
   });
 
-  if (!res.ok) {
-    const err = await res.text().catch(() => res.statusText);
-    console.error('[Brevo] send failed:', res.status, err);
-    // Non-fatal — log and continue so a broken email never crashes a user request
-  }
+  return new Promise((resolve) => {
+    const options = {
+      hostname: 'api.brevo.com',
+      port:     443,
+      path:     '/v3/smtp/email',
+      method:   'POST',
+      headers:  {
+        'api-key':        process.env.BREVO_API_KEY,
+        'content-type':   'application/json',
+        'accept':         'application/json',
+        'content-length': Buffer.byteLength(payload),
+      },
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        if (res.statusCode < 200 || res.statusCode >= 300) {
+          console.error('[Brevo] send failed:', res.statusCode, data.slice(0, 300));
+        }
+        resolve(); // always non-fatal
+      });
+    });
+
+    req.on('error', (err) => {
+      console.error('[Brevo] request error:', err.message);
+      resolve(); // always non-fatal
+    });
+
+    req.write(payload);
+    req.end();
+  });
 }
 
 /* ── Shared HTML wrapper ─────────────────────────────────────── */
